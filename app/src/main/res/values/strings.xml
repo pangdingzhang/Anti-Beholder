@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">XposedModuleDemo</string>
+    <string name="accessibility_service_label">Xposed Accessibility Service</string>
+    <string name="as_description">Accessibility service used in virtual xposed</string>
+</resources>
