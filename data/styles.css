@@ -20,6 +20,8 @@
 }
 .image {
 }
+.placeholder {
+}
 .button {
 }
 .primary_button {
@@ -79,7 +81,13 @@
   color:#000000;
   text-align:left;
 }
+.checkbox {
+  text-align:left;
+}
 .radio_button {
+  text-align:left;
+}
+.tree_node {
   text-align:left;
 }
 .connector {
