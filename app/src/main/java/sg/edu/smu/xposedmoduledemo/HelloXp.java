@@ -18,7 +18,10 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import sg.edu.smu.xposedmoduledemo.hooks.Contacts;
+import sg.edu.smu.xposedmoduledemo.hooks.FineLocationHook;
 import sg.edu.smu.xposedmoduledemo.hooks.HookTemplate;
+import sg.edu.smu.xposedmoduledemo.hooks.Location;
+import sg.edu.smu.xposedmoduledemo.hooks.LocationUpdate;
 import sg.edu.smu.xposedmoduledemo.xposed.XAppOpsHook;
 import sg.edu.smu.xposedmoduledemo.xposed.XButtonHook;
 import sg.edu.smu.xposedmoduledemo.xposed.XContextHook;
@@ -36,7 +39,7 @@ public class HelloXp implements IXposedHookLoadPackage {
     }
 
     private void loadAllHooks() {
-        for (HookTemplate prov : new HookTemplate[]{new Contacts()}) {
+        for (HookTemplate prov : new HookTemplate[]{new FineLocationHook(), new LocationUpdate()}) {
             this.hooks.add(prov);
 
         }
@@ -46,7 +49,7 @@ public class HelloXp implements IXposedHookLoadPackage {
         XHook hook;
         String className;
         Member m;
-        XButtonHook xbuttonHook;
+
 
 //        XContextHook.hook(loadPackageParam.classLoader);
 
@@ -55,6 +58,7 @@ public class HelloXp implements IXposedHookLoadPackage {
             Log.d("Mulin", "handleLoadPackage: "+loadPackageParam.packageName);
             m = hook.getMethod(loadPackageParam.classLoader.loadClass(hook.getClassName()));
             XposedBridge.hookMethod(m, hook.getCallback());
+            Log.d("Mulin", "handleLoadPackage: once");
         }
 
 //        xbuttonHook = new XButtonHook();

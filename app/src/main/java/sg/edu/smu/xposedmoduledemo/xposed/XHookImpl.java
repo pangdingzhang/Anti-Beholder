@@ -47,7 +47,7 @@ public class XHookImpl implements XHook {
         return new XC_MethodHook() {
             public void beforeHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
                 String buttonClass = "";
-
+//                Log.d("Mulin", "before stacktrace");
                 // Test get stack trace to get the button name
                 StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
                 for(StackTraceElement e : stacktrace){
@@ -59,7 +59,8 @@ public class XHookImpl implements XHook {
                 }
                 XButtonHook xbuttonHook = new XButtonHook();
                 XposedHelpers.findAndHookMethod(buttonClass,
-                        loadPackageParam.classLoader,"onClick", View.class,xbuttonHook.getCallback());
+                        loadPackageParam.classLoader,"onClick", View.class,XButtonHook.getCallback());
+
 //                Activity launchedUI = (Activity) param.thisObject;
 //                Context context = launchedUI.getApplicationContext();
 //                Context context = (Context) AndroidAppHelper.currentApplication();
@@ -70,7 +71,7 @@ public class XHookImpl implements XHook {
 //                toast.show();
 
                 Log.d("Mulin", "beforeHookedMethod: "+packageName+"is trying to obtain "+prov);
-                super.beforeHookedMethod(param);
+//                super.beforeHookedMethod(param);
 //                final long currTime = System.currentTimeMillis();
 //                Long lastUpdatedTime = (Long) XHookImpl.lastUpdated.get(Integer.valueOf(XHookImpl.this.prov.getOp()));
                 Object instance = param.thisObject;
@@ -128,17 +129,13 @@ public class XHookImpl implements XHook {
 //                    th.start();
 //                    th.join();
                     XHookImpl.this.hasHooked = true;
-//                    XButtonHook xButtonHook = new XButtonHook();
-//                    Method m = xButtonHook.getMethod(loadPackageParam.classLoader.loadClass(xButtonHook.getClassName()));
-//                    XposedBridge.hookMethod(m, xButtonHook.getCallback());
-//                    Class<?> cls = XposedHelpers.findClass(xButtonHook.getClassName(),)
                     XHookImpl.this.prov.beforeInvocation(param, result[0]);
                 }
             }
 
             /* access modifiers changed from: protected */
             public void afterHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
+//                super.afterHookedMethod(param);
                 if (XHookImpl.this.hasHooked) {
                     XHookImpl.this.prov.afterInvocation(param);
                 }

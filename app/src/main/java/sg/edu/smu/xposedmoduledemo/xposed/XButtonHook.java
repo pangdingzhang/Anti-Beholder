@@ -13,11 +13,11 @@ public class XButtonHook {
     Object view;
     Button v;
 
-    public XC_MethodHook getCallback() {
+    public static XC_MethodHook getCallback() {
         return new XC_MethodHook() {
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                 view = param.args[0];
-                 v  = (Button) view;
+                 Object view = param.args[0];
+                 Button v  = (Button) view;
                 Log.d("Mulin", "You just clicked "+ v.getText().toString());
 
             }

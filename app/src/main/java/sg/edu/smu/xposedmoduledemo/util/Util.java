@@ -67,8 +67,8 @@ public class Util {
     public static final int UNKNOWN = 2;
     public static final String XPOSED_PACKAGE_NAME = "de.robv.android.xposed.installer";
     public static final int YES = 105;
-    public static double fakeLat = 40.7127d;
-    public static double fakeLng = -74.0059d;
+    public static double fakeLat = 1.3535d;
+    public static double fakeLng = 103.9879d;
     private static String pattern = ":[\\d]{1,6}";
     private static Pattern pat = Pattern.compile(pattern);
     private static PackageManager pm;

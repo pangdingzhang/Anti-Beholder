@@ -11,5 +11,6 @@ public interface HookTemplate {
     String getClassName();
     int getOp();
     boolean shouldHook(Object obj, Object... objArr);
+    String toString();
 
 }
