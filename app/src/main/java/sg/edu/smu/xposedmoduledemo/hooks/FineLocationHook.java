@@ -14,17 +14,18 @@ public class FineLocationHook implements HookTemplate{
 
     @Override
     public void afterInvocation(XC_MethodHook.MethodHookParam methodHookParam) {
-        if (this.result == 3) {
-            android.location.Location l = new android.location.Location("passive");
-            Util.modifyLocation(l);
-            methodHookParam.setResult(l);
-        }
+
 
     }
 
     @Override
     public void beforeInvocation(XC_MethodHook.MethodHookParam methodHookParam, int i) {
         this.result = i;
+        if (this.result == 3) {
+            android.location.Location l = new android.location.Location("passive");
+            Util.modifyLocation(l);
+            methodHookParam.setResult(l);
+        }
 
     }
 

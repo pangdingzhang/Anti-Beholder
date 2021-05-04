@@ -3,44 +3,38 @@ package sg.edu.smu.xposedmoduledemo.hooks;
 import java.lang.reflect.Member;
 
 import de.robv.android.xposed.XC_MethodHook;
-import sg.edu.smu.xposedmoduledemo.util.Util;
 
-public class Location implements HookTemplate{
+public class LongitudeHook implements HookTemplate{
+    private static final String className = "android.location.Location";
+    private static final int opNum = 1;
     private int result;
-
     @Override
     public void afterInvocation(XC_MethodHook.MethodHookParam methodHookParam) {
-        if (this.result == 3) {
-            android.location.Location l = new android.location.Location("passive");
-            Util.modifyLocation(l);
-            methodHookParam.setResult(l);
-        }
-
+        methodHookParam.setResult(103.9879d);
     }
 
     @Override
     public void beforeInvocation(XC_MethodHook.MethodHookParam methodHookParam, int i) {
-        this.result = i;
+
     }
 
     @Override
     public Member getCallable(Class<?> cls) {
         try {
-            return cls.getMethod("getLastLocation", null);
+            return cls.getMethod("getLongitude");
         } catch (NoSuchMethodException e) {
             return null;
         }
-
     }
 
     @Override
     public String getClassName() {
-        return "android.location.LocationManager";
+        return className;
     }
 
     @Override
     public int getOp() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -49,5 +43,7 @@ public class Location implements HookTemplate{
     }
 
     @Override
-    public String toString(){ return "getLastLocation";}
+    public String toString() {
+        return "Longitude";
+    }
 }

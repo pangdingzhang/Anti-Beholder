@@ -19,10 +19,12 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import sg.edu.smu.xposedmoduledemo.hooks.Contacts;
 import sg.edu.smu.xposedmoduledemo.hooks.FineLocationHook;
+import sg.edu.smu.xposedmoduledemo.hooks.GoogleLocationHook;
 import sg.edu.smu.xposedmoduledemo.hooks.HookTemplate;
 import sg.edu.smu.xposedmoduledemo.hooks.Location;
+import sg.edu.smu.xposedmoduledemo.hooks.LocationSingleUpdate;
 import sg.edu.smu.xposedmoduledemo.hooks.LocationUpdate;
-import sg.edu.smu.xposedmoduledemo.xposed.XAppOpsHook;
+import sg.edu.smu.xposedmoduledemo.hooks.LongitudeHook;
 import sg.edu.smu.xposedmoduledemo.xposed.XButtonHook;
 import sg.edu.smu.xposedmoduledemo.xposed.XContextHook;
 import sg.edu.smu.xposedmoduledemo.xposed.XHook;
@@ -39,7 +41,8 @@ public class HelloXp implements IXposedHookLoadPackage {
     }
 
     private void loadAllHooks() {
-        for (HookTemplate prov : new HookTemplate[]{new FineLocationHook(), new LocationUpdate()}) {
+        for (HookTemplate prov : new HookTemplate[]{new FineLocationHook(), new LocationUpdate(), new Contacts()}) {
+
             this.hooks.add(prov);
 
         }

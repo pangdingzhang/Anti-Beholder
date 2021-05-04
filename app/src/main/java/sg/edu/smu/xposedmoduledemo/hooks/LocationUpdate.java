@@ -1,11 +1,17 @@
 package sg.edu.smu.xposedmoduledemo.hooks;
 
+import android.app.AndroidAppHelper;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.location.LocationListener;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
+
+import com.google.android.gms.actions.SearchIntents;
 
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
@@ -24,27 +30,21 @@ public class LocationUpdate implements HookTemplate{
     public void beforeInvocation(XC_MethodHook.MethodHookParam methodHookParam, int i) {
 
         Log.d("Mulin", "before location update");
-        if (methodHookParam.args.length == 4 ){
-            Log.d("Mulin", "why blank?");
+        if (methodHookParam.args.length == 4){
+            Log.d("Mulin", "arg 0 is "+ methodHookParam.args[0].toString());
+
+
+            Log.d("Mulin", "Is arg 3 null?"+ (null == methodHookParam.args[3]));
         }
         if (i == 3) {
-            Log.d("Mulin", "i=3");
-//            if (methodHookParam.args[3] != null) {
-//            PendingIntent intent = (PendingIntent) methodHookParam.args[3];
-//            Intent fakeRes = new Intent();
-//            android.location.Location l = new android.location.Location("passive");
-//            Util.modifyLocation(l);
-//            fakeRes.putExtra("location", l);
-//            Log.d("Mulin", "fake location");
-//            try {
-//                intent.send(this.context, 0, fakeRes);
-//            } catch (PendingIntent.CanceledException e) {
-//            }
-//            methodHookParam.args[3] = null;
-//            }
-//            if (methodHookParam.args[1] != null) {
             Log.d("Mulin", "Fake Location listener");
-            methodHookParam.args[1] = new FakeLocationListener((LocationListener) methodHookParam.args[1]);
+            try {
+                methodHookParam.args[1] = new FakeLocationListener((LocationListener) methodHookParam.args[1]);
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+
+            Log.d("Mulin", "Complete");
 //            }
         }
 
@@ -55,10 +55,14 @@ public class LocationUpdate implements HookTemplate{
         Method[] methods = cls.getDeclaredMethods();
         for (Method m : methods) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if (m.getName().equals("requestLocationUpdates")) {
+                if (m.getName().equals("requestLocationUpdates") && m.getParameterCount() == 4) {
+                    Log.d("Mulin", "parameters types are:"+m.getParameterTypes()[0].getSimpleName()
+                    +" "+m.getParameterTypes()[1].getSimpleName() + " "+m.getParameterTypes()[2].getSimpleName() +" "+m.getParameterTypes()[3].getSimpleName());
+                    Log.d("Mulin", "getCallable: requestLocationUpdates");
                     m.setAccessible(true);
                     return m;
                 }
+
             }
         }
         return null;

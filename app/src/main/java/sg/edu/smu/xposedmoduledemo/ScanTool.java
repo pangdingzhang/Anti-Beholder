@@ -25,10 +25,18 @@ public class ScanTool {
                 continue;
             }
                 MyAppInfo myAppInfo = new MyAppInfo();
-                myAppInfo.setAppName(packageInfo.packageName);
+
                 if (packageInfo.applicationInfo.loadIcon(packageManager) == null) {
                     continue;
                 }
+                myAppInfo.setAppName((String) packageManager.getApplicationLabel(packageInfo.applicationInfo));
+                if (packageInfo.requestedPermissions != null) {
+                    myAppInfo.setAppPermission(packageInfo.requestedPermissions.toString());
+                } else{
+                    myAppInfo.setAppPermission("hi");
+                }
+
+
                 myAppInfo.setImage(packageInfo.applicationInfo.loadIcon(packageManager));
                 myAppInfos.add(myAppInfo);
             }

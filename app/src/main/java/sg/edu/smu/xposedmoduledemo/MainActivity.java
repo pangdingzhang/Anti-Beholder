@@ -99,12 +99,14 @@ public class MainActivity extends AppCompatActivity {
                 convertView = LayoutInflater.from(getBaseContext()).inflate(R.layout.item_app_info, null);
                 mViewHolder.iv_app_icon = (ImageView) convertView.findViewById(R.id.iv_app_icon);
                 mViewHolder.tx_app_name = (TextView) convertView.findViewById(R.id.tv_app_name);
+                mViewHolder.tx_app_description = (TextView) convertView.findViewById(R.id.tv_app_description);
                 convertView.setTag(mViewHolder);
             } else {
                 mViewHolder = (ViewHolder) convertView.getTag();
             }
             mViewHolder.iv_app_icon.setImageDrawable(myAppInfo.getImage());
             mViewHolder.tx_app_name.setText(myAppInfo.getAppName());
+            mViewHolder.tx_app_description.setText(myAppInfo.getAppPermission());
             return convertView;
         }
 
@@ -112,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
             ImageView iv_app_icon;
             TextView tx_app_name;
+            TextView tx_app_description;
         }
     }
 }

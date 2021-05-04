@@ -57,17 +57,18 @@ public class XHookImpl implements XHook {
                         break;
                     }
                 }
-                XButtonHook xbuttonHook = new XButtonHook();
-                XposedHelpers.findAndHookMethod(buttonClass,
-                        loadPackageParam.classLoader,"onClick", View.class,XButtonHook.getCallback());
+//                XButtonHook xbuttonHook = new XButtonHook();
+//                XposedHelpers.findAndHookMethod(buttonClass,
+//                        loadPackageParam.classLoader,"onClick", View.class,xbuttonHook.getCallback());
 
 //                Activity launchedUI = (Activity) param.thisObject;
 //                Context context = launchedUI.getApplicationContext();
-//                Context context = (Context) AndroidAppHelper.currentApplication();
+                Context context = (Context) AndroidAppHelper.currentApplication();
 //                String buttonText = xbuttonHook.getButtontext();
+
 //                int duration = Toast.LENGTH_LONG;
 //
-//                Toast toast = Toast.makeText(context, buttonText, duration);
+//                Toast.makeText(context, buttonText, Toast.LENGTH_SHORT).show();
 //                toast.show();
 
                 Log.d("Mulin", "beforeHookedMethod: "+packageName+"is trying to obtain "+prov);
@@ -140,6 +141,7 @@ public class XHookImpl implements XHook {
                     XHookImpl.this.prov.afterInvocation(param);
                 }
                 Log.d("Mulin", "Hook Complete");
+
             }
         };
     }
