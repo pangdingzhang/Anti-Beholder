@@ -47,4 +47,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.google.common/google-collect
     implementation "com.google.guava:guava:16+"
 
+    def appcompat_version = "1.2.0"
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    implementation "androidx.appcompat:appcompat-resources:$appcompat_version"
+
 }

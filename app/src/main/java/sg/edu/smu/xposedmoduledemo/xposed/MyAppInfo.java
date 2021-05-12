@@ -5,9 +5,9 @@ import android.graphics.drawable.Drawable;
 public class MyAppInfo {
     private Drawable image;
     private String appName;
-    private String appPermission;
+    private String[] appPermission;
 
-    public MyAppInfo(Drawable image, String appName, String appPermission) {
+    public MyAppInfo(Drawable image, String appName, String[] appPermission) {
         this.image = image;
         this.appName = appName;
         this.appPermission = appPermission;
@@ -34,11 +34,11 @@ public class MyAppInfo {
         this.appName = appName;
     }
 
-    public String getAppPermission() {
+    public String[] getAppPermission() {
         return appPermission;
     }
 
-    public void setAppPermission(String appPermission) {
+    public void setAppPermission(String[] appPermission) {
         this.appPermission = appPermission;
     }
 }

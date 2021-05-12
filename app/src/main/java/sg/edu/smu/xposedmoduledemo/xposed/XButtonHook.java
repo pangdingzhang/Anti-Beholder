@@ -13,18 +13,19 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
 
 public class XButtonHook {
-    Object view;
-    Button v;
+    public Object view;
+    public Button v;
+    Toast toast;
 
-    public static XC_MethodHook getCallback() {
+    public  XC_MethodHook getCallback() {
         return new XC_MethodHook() {
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                Object view = param.args[0];
-                Button v  = (Button) view;
+                view = param.args[0];
+                v  = (Button) view;
                 Log.d("Mulin", "You just clicked "+ v.getText().toString());
                 Context context = (Context) AndroidAppHelper.currentApplication();
-                Toast.makeText(context, v.getText().toString(), Toast.LENGTH_SHORT).show();
-
+//                Toast.makeText(context, v.getText().toString(), Toast.LENGTH_SHORT).show();
+                showAToast(v.getText().toString());
             }
         };
     }
@@ -33,4 +34,12 @@ public class XButtonHook {
         return v.getText().toString();
     }
 
+    public void showAToast (String message){
+        if (toast != null) {
+            toast.cancel();
+        }
+        Context context = (Context) AndroidAppHelper.currentApplication();
+        toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
+        toast.show();
+    }
 }

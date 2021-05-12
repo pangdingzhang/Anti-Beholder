@@ -19,12 +19,9 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import sg.edu.smu.xposedmoduledemo.hooks.Contacts;
 import sg.edu.smu.xposedmoduledemo.hooks.FineLocationHook;
-import sg.edu.smu.xposedmoduledemo.hooks.GoogleLocationHook;
 import sg.edu.smu.xposedmoduledemo.hooks.HookTemplate;
-import sg.edu.smu.xposedmoduledemo.hooks.Location;
-import sg.edu.smu.xposedmoduledemo.hooks.LocationSingleUpdate;
+
 import sg.edu.smu.xposedmoduledemo.hooks.LocationUpdate;
-import sg.edu.smu.xposedmoduledemo.hooks.LongitudeHook;
 import sg.edu.smu.xposedmoduledemo.xposed.XButtonHook;
 import sg.edu.smu.xposedmoduledemo.xposed.XContextHook;
 import sg.edu.smu.xposedmoduledemo.xposed.XHook;
@@ -41,7 +38,7 @@ public class HelloXp implements IXposedHookLoadPackage {
     }
 
     private void loadAllHooks() {
-        for (HookTemplate prov : new HookTemplate[]{new FineLocationHook(), new LocationUpdate(), new Contacts()}) {
+        for (HookTemplate prov : new HookTemplate[]{new Contacts(), new FineLocationHook(), new LocationUpdate()}) {
 
             this.hooks.add(prov);
 
@@ -77,26 +74,6 @@ public class HelloXp implements IXposedHookLoadPackage {
 //                View v  = (Button) view;
 //                Log.d("Mulin", ""+v);
 //
-//            }
-//        });
-
-
-//Demo
-//        final Class className = XposedHelpers.findClass("sg.edu.smu.permissionrequestapp.ContactUtils", loadPackageParam.classLoader);
-//        XposedHelpers.findAndHookMethod(className, "getAllContacts", Context.class, new XC_MethodHook() {
-//            @Override
-//            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-//                XposedBridge.log("app is trying to get your contact");
-//            }
-//
-//            @Override
-//            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-//                MyContacts temp = new MyContacts();
-//                temp.name = "FakeName";
-//                temp.phone = "00000000";
-//                temp.note = "Fake successful";
-//                param.setResult(temp);
-//                Log.d("Mulin", "Fake successful");
 //            }
 //        });
 

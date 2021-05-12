@@ -2,4 +2,9 @@
     <string name="app_name">XposedModuleDemo</string>
     <string name="accessibility_service_label">Xposed Accessibility Service</string>
     <string name="as_description">Accessibility service used in virtual xposed</string>
+    <string-array name="option_array">
+        <item>Allow</item>
+        <item>Deny</item>
+        <item>Fake</item>
+    </string-array>
 </resources>

@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.google.android.gms.actions.SearchIntents;
 import de.robv.android.xposed.XC_MethodHook;
-import sg.edu.smu.xposedmoduledemo.MyAccessibilityService;
 
 import java.lang.reflect.Member;
 

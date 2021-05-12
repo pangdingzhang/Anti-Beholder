@@ -3,9 +3,11 @@ package sg.edu.smu.xposedmoduledemo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PermissionInfo;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import sg.edu.smu.xposedmoduledemo.xposed.MyAppInfo;
@@ -16,6 +18,7 @@ public class ScanTool {
 
     public static List<MyAppInfo> scanLocalInstallAppList(PackageManager packageManager) {
         List<MyAppInfo> myAppInfos = new ArrayList<MyAppInfo>();
+        List<String> dangerousPermissions;
         try {
             List<PackageInfo> packageInfos = packageManager.getInstalledPackages(0);
             for (int i = 0; i < packageInfos.size(); i++) {
@@ -31,9 +34,24 @@ public class ScanTool {
                 }
                 myAppInfo.setAppName((String) packageManager.getApplicationLabel(packageInfo.applicationInfo));
                 if (packageInfo.requestedPermissions != null) {
-                    myAppInfo.setAppPermission(packageInfo.requestedPermissions.toString());
+                    dangerousPermissions = new ArrayList<>();
+                    for (String requestedPermission : packageInfo.requestedPermissions) {
+                        try {
+                            PermissionInfo permissionInfo = packageManager.getPermissionInfo(requestedPermission, 0);
+                            switch (permissionInfo.protectionLevel & PermissionInfo.PROTECTION_MASK_BASE) {
+                                case PermissionInfo.PROTECTION_DANGEROUS:
+
+                                    dangerousPermissions.add(requestedPermission);
+                                    break;
+                            }
+                        } catch (PackageManager.NameNotFoundException ignored) {
+                            // unknown permission
+                        }
+                    }
+//                    myAppInfo.setAppPermission(Arrays.toString(packageInfo.requestedPermissions));
+                    myAppInfo.setAppPermission(dangerousPermissions.toArray(new String[0]));
                 } else{
-                    myAppInfo.setAppPermission("hi");
+                    myAppInfo.setAppPermission(new String[]{"No dangerous permission"});
                 }
 
 
