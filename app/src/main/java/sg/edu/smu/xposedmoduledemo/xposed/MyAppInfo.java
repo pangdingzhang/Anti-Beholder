@@ -6,6 +6,7 @@ public class MyAppInfo {
     private Drawable image;
     private String appName;
     private String[] appPermission;
+    private String packageName;
 
     public MyAppInfo(Drawable image, String appName, String[] appPermission) {
         this.image = image;
@@ -40,5 +41,13 @@ public class MyAppInfo {
 
     public void setAppPermission(String[] appPermission) {
         this.appPermission = appPermission;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 }

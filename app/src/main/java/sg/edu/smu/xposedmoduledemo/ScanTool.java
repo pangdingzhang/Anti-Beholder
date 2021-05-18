@@ -33,6 +33,7 @@ public class ScanTool {
                     continue;
                 }
                 myAppInfo.setAppName((String) packageManager.getApplicationLabel(packageInfo.applicationInfo));
+                myAppInfo.setPackageName(packageInfo.packageName);
                 if (packageInfo.requestedPermissions != null) {
                     dangerousPermissions = new ArrayList<>();
                     for (String requestedPermission : packageInfo.requestedPermissions) {

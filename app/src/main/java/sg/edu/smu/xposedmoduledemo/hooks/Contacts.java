@@ -55,13 +55,13 @@ public class Contacts implements HookTemplate {
 
     @Override
     public void afterInvocation(XC_MethodHook.MethodHookParam params) {
-        if (this.result == 3) {
+        if (this.result == 2) {
             params.setResult(new DummyCursor((Cursor) params.getResult()));
         }
     }
 
     public String toString() {
-        return "Contacts";
+        return "READ_CONTACTS";
     }
 
 }

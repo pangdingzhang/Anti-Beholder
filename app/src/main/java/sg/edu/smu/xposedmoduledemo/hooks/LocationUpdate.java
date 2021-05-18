@@ -36,7 +36,7 @@ public class LocationUpdate implements HookTemplate{
 
             Log.d("Mulin", "Is arg 3 null?"+ (null == methodHookParam.args[3]));
         }
-        if (i == 3) {
+        if (i == 2) {
             Log.d("Mulin", "Fake Location listener");
             try {
                 methodHookParam.args[1] = new FakeLocationListener((LocationListener) methodHookParam.args[1]);
@@ -85,5 +85,5 @@ public class LocationUpdate implements HookTemplate{
     }
 
     @Override
-    public String toString(){ return "LocationUpdate";}
+    public String toString(){ return "ACCESS_FINE_LOCATION";}
 }

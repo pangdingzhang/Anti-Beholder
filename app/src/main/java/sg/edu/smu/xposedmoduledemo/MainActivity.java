@@ -4,14 +4,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
@@ -39,17 +42,25 @@ public class MainActivity extends AppCompatActivity {
     public HashMap<String,Integer> mapping = new HashMap<String, Integer>();
     public List<List<String>> permissionList = new ArrayList<List<String>>();
 
+    public ArrayAdapter<CharSequence> spinnerAdapter;
+    public SharedPreferences pref;
+    public SharedPreferences.Editor editor;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         lv_app_list = (ExpandableListView) findViewById(R.id.lv_app_list);
-
+        Display newDisplay = getWindowManager().getDefaultDisplay();
+        int width = newDisplay.getWidth();
+        lv_app_list.setIndicatorBounds(width-100, width);
         initAppList();
         mapping.put("android.permission.READ_EXTERNAL_STORAGE", R.mipmap.file);
         mapping.put("android.permission.READ_CONTACTS", R.mipmap.contact);
         mapping.put("android.permission.ACCESS_FINE_LOCATION", R.mipmap.location);
+        pref= getSharedPreferences("permission_info",Context.MODE_MULTI_PROCESS);
+        editor = pref.edit();
     }
 
     private void initAppList() {
@@ -64,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         mAppAdapter = new AppAdapter(MainActivity.this,appInfos,permissionList);
+                        spinnerAdapter = ArrayAdapter.createFromResource(MainActivity.this,
+                                R.array.option_array, android.R.layout.simple_spinner_item);
+                        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         lv_app_list.setAdapter(mAppAdapter);
 
                     }
@@ -78,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         List<MyAppInfo> myAppInfos;
         List<List<String>> permissions;
         Context context;
+
 
         public AppAdapter(Context context,List<MyAppInfo> myAppInfos, List<List<String>> permissions){
             this.context=context;
@@ -211,6 +226,8 @@ public class MainActivity extends AppCompatActivity {
             mViewHolder.tx_app_name.setText(myAppInfo.getAppName());
             mViewHolder.tx_app_description.removeAllViews();
             addPermissionIcons(myAppInfo.getAppPermission());
+
+
             return convertView;
         }
 
@@ -228,6 +245,22 @@ public class MainActivity extends AppCompatActivity {
                 childViewHolder = (ChildViewHolder) convertView.getTag();
             }
             childViewHolder.children_item.setText(permissions.get(groupPosition).get(childPosition));
+            childViewHolder.children_spinner.setAdapter(spinnerAdapter);
+            childViewHolder.children_spinner.setSelection(Integer.parseInt(
+                    pref.getString(myAppInfos.get(groupPosition).getPackageName()+permissions.get(groupPosition).get(childPosition),"1")));
+            childViewHolder.children_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    Log.d("Mulin", "MainActivity: "+myAppInfos.get(groupPosition).getPackageName()+permissions.get(groupPosition).get(childPosition));
+                    editor.putString(myAppInfos.get(groupPosition).getPackageName()+permissions.get(groupPosition).get(childPosition),Integer.toString(i));
+                    editor.apply();
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
             return convertView;
         }
 
@@ -250,7 +283,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void addPermissionList(List<MyAppInfo> myAppInfos){
         for (MyAppInfo myAppInfo : myAppInfos){
-            permissionList.add(Arrays.asList(myAppInfo.getAppPermission()));
+            String[] permissionArray = myAppInfo.getAppPermission();
+            List<String> shortNameList = new ArrayList<>();
+            for (String permission : permissionArray){
+                String shortName = "No dangerous permission";
+                if (!permission.equals("No dangerous permission")) {
+                    shortName = permission.substring(19);
+                    shortNameList.add(shortName);
+                    continue;
+                }
+                shortNameList.add(shortName);
+            }
+            permissionList.add(shortNameList);
         }
     }
 }

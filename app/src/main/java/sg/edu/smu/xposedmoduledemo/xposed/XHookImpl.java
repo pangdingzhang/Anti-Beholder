@@ -2,6 +2,7 @@ package sg.edu.smu.xposedmoduledemo.xposed;
 
 import android.app.AndroidAppHelper;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +26,7 @@ public class XHookImpl implements XHook {
     private final HookTemplate prov;
     private XC_LoadPackage.LoadPackageParam loadPackageParam;
     private Toast toast;
+    private SharedPreferences pref;
 
     public XHookImpl(HookTemplate prov2, String packageName2, XC_LoadPackage.LoadPackageParam loadPackageParam) {
         this.prov = prov2;
@@ -36,7 +38,8 @@ public class XHookImpl implements XHook {
     public XC_MethodHook getCallback() {
         return new XC_MethodHook() {
             public void beforeHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
-
+                Context vxContext = AndroidAppHelper.currentApplication().getApplicationContext().createPackageContext("sg.edu.smu.xposedmoduledemo", 0);
+                pref = vxContext.getSharedPreferences("permission_info",Context.MODE_PRIVATE);
 
 //                Context context =  AndroidAppHelper.currentApplication();
 //                String buttonText = xbuttonHook.getButtontext();
@@ -86,7 +89,8 @@ public class XHookImpl implements XHook {
 //                }
                 if (XHookImpl.this.prov.shouldHook(instance, args)) {
                     final int[] result = {0};
-                    result[0] = 3; // 3 means fake
+//                    result[0] = 3; // 3 means fake
+                    result[0] = Integer.parseInt(pref.getString(packageName+prov.toString(),"0"));
                     XHookImpl.this.hasHooked = true;
                     XHookImpl.this.prov.beforeInvocation(param, result[0]);
 
