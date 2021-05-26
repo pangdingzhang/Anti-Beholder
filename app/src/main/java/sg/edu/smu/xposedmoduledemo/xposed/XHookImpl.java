@@ -1,8 +1,11 @@
 package sg.edu.smu.xposedmoduledemo.xposed;
 
 import android.app.AndroidAppHelper;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +15,7 @@ import android.widget.Toast;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import sg.edu.smu.xposedmoduledemo.DBHelper;
 import sg.edu.smu.xposedmoduledemo.MainActivity;
 import sg.edu.smu.xposedmoduledemo.hooks.HookTemplate;
 
@@ -27,6 +31,7 @@ public class XHookImpl implements XHook {
     private XC_LoadPackage.LoadPackageParam loadPackageParam;
     private Toast toast;
     private SharedPreferences pref;
+    private DBHelper dbHelper;
 
     public XHookImpl(HookTemplate prov2, String packageName2, XC_LoadPackage.LoadPackageParam loadPackageParam) {
         this.prov = prov2;
@@ -38,9 +43,29 @@ public class XHookImpl implements XHook {
     public XC_MethodHook getCallback() {
         return new XC_MethodHook() {
             public void beforeHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
+                Context appContext = AndroidAppHelper.currentApplication().getApplicationContext();
                 Context vxContext = AndroidAppHelper.currentApplication().getApplicationContext().createPackageContext("sg.edu.smu.xposedmoduledemo", 0);
                 pref = vxContext.getSharedPreferences("permission_info",Context.MODE_PRIVATE);
+                dbHelper = new DBHelper(vxContext, "Permission.db", null, 1);
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                ContentValues values = new ContentValues();
+                values.put("package_name", packageName);
+                values.put("permission", prov.toString());
+                values.put("time", ((int)System.currentTimeMillis()));
+                db.insert("permission_db", null, values);
+                values.clear();
 
+                Cursor cursor = db.query("permission_db", null, null, null, null, null, null);
+                if (cursor.moveToFirst()){
+                    do {
+                        String package_name = cursor.getString(cursor.getColumnIndex("package_name"));
+                        String permission_name = cursor.getString(cursor.getColumnIndex("permission"));
+                        Integer time = cursor.getInt(cursor.getColumnIndex("time"));
+                        Log.d("Mulin", "This is the last record in db - package name"+package_name);
+                        Log.d("Mulin", "This is the last record in db - permission name"+permission_name);
+                        Log.d("Mulin", "This is the last record in db - time"+time);
+                    } while (cursor.moveToNext());
+                }
 //                Context context =  AndroidAppHelper.currentApplication();
 //                String buttonText = xbuttonHook.getButtontext();
 //                Log.d("Mulin", "in XHookImple the button text is "+buttonText);
