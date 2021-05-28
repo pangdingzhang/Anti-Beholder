@@ -20,6 +20,8 @@ import sg.edu.smu.xposedmoduledemo.MainActivity;
 import sg.edu.smu.xposedmoduledemo.hooks.HookTemplate;
 
 import java.lang.reflect.Member;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class XHookImpl implements XHook {
 //    private static final double TIME_TO_LIVE = 15000.0d;
@@ -43,7 +45,7 @@ public class XHookImpl implements XHook {
     public XC_MethodHook getCallback() {
         return new XC_MethodHook() {
             public void beforeHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
-                Context appContext = AndroidAppHelper.currentApplication().getApplicationContext();
+
                 Context vxContext = AndroidAppHelper.currentApplication().getApplicationContext().createPackageContext("sg.edu.smu.xposedmoduledemo", 0);
                 pref = vxContext.getSharedPreferences("permission_info",Context.MODE_PRIVATE);
                 dbHelper = new DBHelper(vxContext, "Permission.db", null, 1);
@@ -51,21 +53,36 @@ public class XHookImpl implements XHook {
                 ContentValues values = new ContentValues();
                 values.put("package_name", packageName);
                 values.put("permission", prov.toString());
-                values.put("time", ((int)System.currentTimeMillis()));
+                values.put("time", (System.currentTimeMillis()));
                 db.insert("permission_db", null, values);
                 values.clear();
 
                 Cursor cursor = db.query("permission_db", null, null, null, null, null, null);
-                if (cursor.moveToFirst()){
+                String[] tableColumns = new String[]{"time"};
+                String whereClause = "package_name = ? AND permission = ?";
+                String[] whereArgs = new String[]{"sg.edu.smu.permissionrequestapp","READ_CONTACTS"};
+                Cursor cursor1 = db.query("permission_db", tableColumns, whereClause, whereArgs,null,null,null);
+
+//                if (cursor.moveToFirst()){
+//                    do {
+//                        String package_name = cursor.getString(cursor.getColumnIndex("package_name"));
+//                        String permission_name = cursor.getString(cursor.getColumnIndex("permission"));
+//                        Integer time = cursor.getInt(cursor.getColumnIndex("time"));
+//                        Log.d("Mulin", "This is the last record in db - package name"+package_name);
+//                        Log.d("Mulin", "This is the last record in db - permission name"+permission_name);
+//                        Log.d("Mulin", "This is the last record in db - time"+time);
+//                    } while (cursor.moveToNext());
+//                }
+
+                if (cursor1.moveToFirst()){
                     do {
-                        String package_name = cursor.getString(cursor.getColumnIndex("package_name"));
-                        String permission_name = cursor.getString(cursor.getColumnIndex("permission"));
-                        Integer time = cursor.getInt(cursor.getColumnIndex("time"));
-                        Log.d("Mulin", "This is the last record in db - package name"+package_name);
-                        Log.d("Mulin", "This is the last record in db - permission name"+permission_name);
-                        Log.d("Mulin", "This is the last record in db - time"+time);
-                    } while (cursor.moveToNext());
+                        Long time = cursor1.getLong(cursor1.getColumnIndex("time"));
+                        String dateAsString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                                .format(new Date(time));
+                        Log.d("Mulin", "TEST TEST TEST This is the last record in db - time "+time);
+                    } while (cursor1.moveToNext());
                 }
+
 //                Context context =  AndroidAppHelper.currentApplication();
 //                String buttonText = xbuttonHook.getButtontext();
 //                Log.d("Mulin", "in XHookImple the button text is "+buttonText);

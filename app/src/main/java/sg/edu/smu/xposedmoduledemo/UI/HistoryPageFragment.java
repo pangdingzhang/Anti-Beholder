@@ -2,6 +2,9 @@ package sg.edu.smu.xposedmoduledemo.UI;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,10 +27,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import sg.edu.smu.xposedmoduledemo.DBHelper;
 import sg.edu.smu.xposedmoduledemo.MainActivity;
 import sg.edu.smu.xposedmoduledemo.R;
 import sg.edu.smu.xposedmoduledemo.ScanTool;
@@ -38,8 +44,8 @@ public class HistoryPageFragment extends Fragment {
     private List<MyAppInfo> myAppInfos;
     private List<List<String>> permissions;
     private HistoryPageFragment.AppAdapter.ViewHolder mViewHolder;
-
     private HashMap<String,Integer> mapping = new HashMap<String, Integer>();
+    private DBHelper dbHelper;
 
     public HistoryPageFragment(){
         super(R.layout.report_group_item);
@@ -56,6 +62,7 @@ public class HistoryPageFragment extends Fragment {
         mapping.put("android.permission.READ_EXTERNAL_STORAGE", R.mipmap.file);
         mapping.put("android.permission.READ_CONTACTS", R.mipmap.contact);
         mapping.put("android.permission.ACCESS_FINE_LOCATION", R.mipmap.location);
+        mapping.put("android.permission.READ_PHONE_STATE", R.mipmap.phone);
     }
 
     @Nullable
@@ -88,7 +95,6 @@ public class HistoryPageFragment extends Fragment {
                     mViewHolder.tx_app_description.addView(imageView); //动态添加图片
                 }
             }
-            Log.d("Mulin", "Nothing found");
         }
 
         @Override
@@ -161,6 +167,26 @@ public class HistoryPageFragment extends Fragment {
         @Override
         public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
             AppAdapter.ChildViewHolder childViewHolder;
+            dbHelper = new DBHelper(context, "Permission.db", null, 1);
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            String[] tableColumns = new String[]{"time"};
+            String whereClause = "package_name = ? AND permission = ?";
+            String[] whereArgs = new String[]{myAppInfos.get(groupPosition).getPackageName(),permissions.get(groupPosition).get(childPosition)};
+            Cursor cursor1 = db.query("permission_db", tableColumns, whereClause, whereArgs,null,null,null);
+            String dateAsString = "N/A";
+            if (cursor1.moveToFirst()){
+                do {
+                    Long time = cursor1.getLong(cursor1.getColumnIndex("time"));
+                    dateAsString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                            .format(new Date(time));
+                } while (cursor1.moveToNext());
+            }
+
+            String whereClause2 = "package_name = ? AND permission = ? AND strftime('%s','now') * 1000 - time < 5*60*1000";
+            // 5 mins * 60 seconds * 1000 mile seconds
+            String[] whereArgs2 = new String[]{myAppInfos.get(groupPosition).getPackageName(),permissions.get(groupPosition).get(childPosition)};
+            long count = DatabaseUtils.queryNumEntries(db, "permission_db",whereClause2,whereArgs2);
+
             if (convertView==null){
                 convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.repory_sub_item,parent,false);
                 childViewHolder = new AppAdapter.ChildViewHolder();
@@ -173,8 +199,12 @@ public class HistoryPageFragment extends Fragment {
                 childViewHolder = (AppAdapter.ChildViewHolder) convertView.getTag();
             }
             childViewHolder.children_item.setText(permissions.get(groupPosition).get(childPosition));
+            Integer logoResource = mapping.get("android.permission."+permissions.get(groupPosition).get(childPosition));
+            if (null != logoResource){
+                childViewHolder.children_icon.setImageResource(logoResource);
+            }
 //            childViewHolder.children_icon.setImageResource(mapping.get(permissions.get(groupPosition).get(childPosition)));
-            childViewHolder.children_detail.setText("Total access time, Last access time");
+            childViewHolder.children_detail.setText("Total access times: "+ count +"\nLast Access Time: "+dateAsString);
 
             return convertView;
         }
