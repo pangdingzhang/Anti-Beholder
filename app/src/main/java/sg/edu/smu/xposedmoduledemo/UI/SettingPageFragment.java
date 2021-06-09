@@ -85,7 +85,6 @@ public class SettingPageFragment extends Fragment {
                     mViewHolder.tx_app_description.addView(imageView); //动态添加图片
                 }
             }
-            Log.d("Mulin", "Nothing found");
         }
 
         @Override

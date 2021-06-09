@@ -3,6 +3,7 @@ package sg.edu.smu.xposedmoduledemo.xposed;
 import android.app.AndroidAppHelper;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -32,13 +33,15 @@ public class XHookImpl implements XHook {
     private final HookTemplate prov;
     private XC_LoadPackage.LoadPackageParam loadPackageParam;
     private Toast toast;
+    private TextReceiver mTextReceiver;
     private SharedPreferences pref;
     private DBHelper dbHelper;
 
-    public XHookImpl(HookTemplate prov2, String packageName2, XC_LoadPackage.LoadPackageParam loadPackageParam) {
+    public XHookImpl(HookTemplate prov2, String packageName2, XC_LoadPackage.LoadPackageParam loadPackageParam, TextReceiver textReceiver) {
         this.prov = prov2;
         this.packageName = packageName2;
         this.loadPackageParam = loadPackageParam;
+        this.mTextReceiver = textReceiver;
     }
 
     @Override
@@ -46,61 +49,23 @@ public class XHookImpl implements XHook {
         return new XC_MethodHook() {
             public void beforeHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
 
-                Context vxContext = AndroidAppHelper.currentApplication().getApplicationContext().createPackageContext("sg.edu.smu.xposedmoduledemo", 0);
-                pref = vxContext.getSharedPreferences("permission_info",Context.MODE_PRIVATE);
-                dbHelper = new DBHelper(vxContext, "Permission.db", null, 1);
-                SQLiteDatabase db = dbHelper.getWritableDatabase();
-                ContentValues values = new ContentValues();
-                values.put("package_name", packageName);
-                values.put("permission", prov.toString());
-                values.put("time", (System.currentTimeMillis()));
-                db.insert("permission_db", null, values);
-                values.clear();
 
-                Cursor cursor = db.query("permission_db", null, null, null, null, null, null);
-                String[] tableColumns = new String[]{"time"};
-                String whereClause = "package_name = ? AND permission = ?";
-                String[] whereArgs = new String[]{"sg.edu.smu.permissionrequestapp","READ_CONTACTS"};
-                Cursor cursor1 = db.query("permission_db", tableColumns, whereClause, whereArgs,null,null,null);
 
-//                if (cursor.moveToFirst()){
+//                Cursor cursor = db.query("permission_db", null, null, null, null, null, null);
+//                String[] tableColumns = new String[]{"time"};
+//                String whereClause = "package_name = ? AND permission = ?";
+//                String[] whereArgs = new String[]{"sg.edu.smu.permissionrequestapp","READ_CONTACTS"};
+//                Cursor cursor1 = db.query("permission_db", tableColumns, whereClause, whereArgs,null,null,null);
+
+//                if (cursor1.moveToFirst()){
 //                    do {
-//                        String package_name = cursor.getString(cursor.getColumnIndex("package_name"));
-//                        String permission_name = cursor.getString(cursor.getColumnIndex("permission"));
-//                        Integer time = cursor.getInt(cursor.getColumnIndex("time"));
-//                        Log.d("Mulin", "This is the last record in db - package name"+package_name);
-//                        Log.d("Mulin", "This is the last record in db - permission name"+permission_name);
-//                        Log.d("Mulin", "This is the last record in db - time"+time);
-//                    } while (cursor.moveToNext());
+//                        Long time = cursor1.getLong(cursor1.getColumnIndex("time"));
+//                        String dateAsString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+//                                .format(new Date(time));
+//                        Log.d("Mulin", "TEST TEST TEST This is the last record in db - time "+time);
+//                    } while (cursor1.moveToNext());
 //                }
 
-                if (cursor1.moveToFirst()){
-                    do {
-                        Long time = cursor1.getLong(cursor1.getColumnIndex("time"));
-                        String dateAsString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                                .format(new Date(time));
-                        Log.d("Mulin", "TEST TEST TEST This is the last record in db - time "+time);
-                    } while (cursor1.moveToNext());
-                }
-
-//                Context context =  AndroidAppHelper.currentApplication();
-//                String buttonText = xbuttonHook.getButtontext();
-//                Log.d("Mulin", "in XHookImple the button text is "+buttonText);
-
-//                showAToast(buttonText);
-//                Toast.makeText(context, buttonText, Toast.LENGTH_SHORT).show();
-
-//                XposedHelpers.findAndHookMethod(buttonClass,
-//                        loadPackageParam.classLoader, "onClick", View.class, new XC_MethodHook() {
-//                            @Override
-//                            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-//                                super.afterHookedMethod(param);
-//                                Object view = param.args[0];
-//                                Button v  = (Button) view;
-//                                Log.d("Mulin", "You just clicked "+ v.getText().toString());
-//                                Context context = (Context) AndroidAppHelper.currentApplication();
-//                            }
-//                        });
 
 //                XposedHelpers.findAndHookMethod(View.class ,"setOnClickListener", View.OnClickListener.class, new XC_MethodHook() {
 //                    @Override
@@ -117,25 +82,30 @@ public class XHookImpl implements XHook {
 //                    }
 //                });
 
-
-                Log.d("Mulin", "beforeHookedMethod: " + packageName + "is trying to obtain " + prov);
-//                super.beforeHookedMethod(param);
-//                final long currTime = System.currentTimeMillis();
-//                Long lastUpdatedTime = (Long) XHookImpl.lastUpdated.get(Integer.valueOf(XHookImpl.this.prov.getOp()));
                 Object instance = param.thisObject;
                 Object[] args = param.args;
-//                final PermissionModeRequest req = new PermissionModeRequestImpl(XHookImpl.this.prov.getOp(), Thread.currentThread().getStackTrace(), Process.myUid());
-//                if (lastUpdatedTime != null && ((double) (currTime - lastUpdatedTime.longValue())) < XHookImpl.TIME_TO_LIVE && XHookImpl.cachedResponse.containsKey(Integer.valueOf(XHookImpl.this.prov.getOp()))) {
-//                    XHookImpl.this.hasHooked = true;
-//                    XHookImpl.this.prov.beforeInvocation(param, ((Integer) XHookImpl.cachedResponse.get(Integer.valueOf(XHookImpl.this.prov.getOp()))).intValue());
-//                }
+
                 if (XHookImpl.this.prov.shouldHook(instance, args)) {
+                    Context vxContext = AndroidAppHelper.currentApplication().getApplicationContext().createPackageContext("sg.edu.smu.xposedmoduledemo", 0);
+                    pref = vxContext.getSharedPreferences("permission_info",Context.MODE_PRIVATE);
+                    dbHelper = new DBHelper(vxContext, "Permission.db", null, 1);
+                    SQLiteDatabase db = dbHelper.getWritableDatabase();
+                    ContentValues values = new ContentValues();
+                    values.put("package_name", packageName);
+                    values.put("permission", prov.toString());
+                    values.put("time", (System.currentTimeMillis()));
+                    db.insert("permission_db", null, values);
+                    values.clear();
+                    Log.d("Mulin", "beforeHookedMethod: " + packageName + "is trying to obtain " + prov);
                     final int[] result = {0};
 //                    result[0] = 3; // 3 means fake
                     result[0] = Integer.parseInt(pref.getString(packageName+prov.toString(),"0"));
                     XHookImpl.this.hasHooked = true;
                     XHookImpl.this.prov.beforeInvocation(param, result[0]);
 
+                    IntentFilter filter = new IntentFilter();
+                    filter.addAction("Click_Event");
+                    AndroidAppHelper.currentApplication().registerReceiver(mTextReceiver, filter);
                     String buttonClass = "";
                     // Test get stack trace to get the button name
                     StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
@@ -146,11 +116,13 @@ public class XHookImpl implements XHook {
                             break;
                         }
                     }
-//                    XButtonHook xbuttonHook = new XButtonHook();
-//                    XposedHelpers.findAndHookMethod(buttonClass,
-//                            loadPackageParam.classLoader,"onClick", View.class,xbuttonHook.getCallback());
+                    XButtonHook xbuttonHook = new XButtonHook();
+                    XposedHelpers.findAndHookMethod(buttonClass,
+                            loadPackageParam.classLoader,"onClick", View.class,xbuttonHook.getCallback());
+
                 }
             }
+
 
             /* access modifiers changed from: protected */
             public void afterHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
@@ -174,23 +146,6 @@ public class XHookImpl implements XHook {
         return this.prov.getClassName();
     }
 
-    public void showAToast (String message){
-        if (toast != null) {
-            toast.cancel();
-        }
-        Context context = (Context) AndroidAppHelper.currentApplication();
-        toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
-        toast.show();
-    }
-
-    public StackTraceElement[] reverseStackTrace(StackTraceElement[] original){
-        for (int k = 0; k < original.length/2; k++) {
-            StackTraceElement temp = original[k];
-            original[k] = original[original.length-(1+k)];
-            original[original.length-(1+k)] = temp;
-        }
-        return original;
-    }
 }
 
 
