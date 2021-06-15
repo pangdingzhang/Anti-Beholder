@@ -10,7 +10,7 @@ public class Location implements HookTemplate{
 
     @Override
     public void afterInvocation(XC_MethodHook.MethodHookParam methodHookParam) {
-        if (this.result == 3) {
+        if (this.result == 2) {
             android.location.Location l = new android.location.Location("passive");
             Util.modifyLocation(l);
             methodHookParam.setResult(l);

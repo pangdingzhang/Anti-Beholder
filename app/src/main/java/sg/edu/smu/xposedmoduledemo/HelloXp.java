@@ -23,6 +23,7 @@ import sg.edu.smu.xposedmoduledemo.hooks.FineLocationHook;
 import sg.edu.smu.xposedmoduledemo.hooks.HookTemplate;
 
 import sg.edu.smu.xposedmoduledemo.hooks.LocationUpdate;
+import sg.edu.smu.xposedmoduledemo.xposed.ButtonSingleton;
 import sg.edu.smu.xposedmoduledemo.xposed.TextReceiver;
 import sg.edu.smu.xposedmoduledemo.xposed.XButtonHook;
 import sg.edu.smu.xposedmoduledemo.xposed.XContextHook;
@@ -35,17 +36,23 @@ import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 public class HelloXp implements IXposedHookLoadPackage {
     private final List<HookTemplate> hooks = Lists.newArrayList();
     private final TextReceiver textReceiver = new TextReceiver();
+    private ButtonSingleton buttonSingleton = new ButtonSingleton();
+    private final List<String> buttonClasses = Lists.newArrayList();
 
     public HelloXp() {
         loadAllHooks();
+        loadButtons();
     }
 
     private void loadAllHooks() {
-        for (HookTemplate prov : new HookTemplate[]{new Contacts(), new FineLocationHook(), new LocationUpdate()}) {
-
+        for (HookTemplate prov : new HookTemplate[]{new Contacts(), new FineLocationHook(), new LocationUpdate(), new XButtonHook()}) {
             this.hooks.add(prov);
-
         }
+    }
+
+    private void loadButtons(){
+        buttonClasses.add("sg.edu.smu.permissionrequestapp.MainActivity$1");
+        buttonClasses.add("sg.edu.smu.permissionrequestapp.MainActivity$2");
     }
 
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
@@ -59,10 +66,23 @@ public class HelloXp implements IXposedHookLoadPackage {
 //        XContextHook.hook(loadPackageParam.classLoader);
 
         for (HookTemplate prov : this.hooks) {
-            hook = new XHookImpl(prov, loadPackageParam.packageName,loadPackageParam,textReceiver);
+//            hook = new XHookImpl(prov, loadPackageParam.packageName,loadPackageParam,textReceiver);
+            hook = new XHookImpl(prov, loadPackageParam.packageName,loadPackageParam,buttonSingleton);
             Log.d("Mulin", "handleLoadPackage: "+loadPackageParam.packageName);
-            m = hook.getMethod(loadPackageParam.classLoader.loadClass(hook.getClassName()));
-            XposedBridge.hookMethod(m, hook.getCallback());
+
+            // here button hook is treated differently bcz it get class name from a different place
+            if (prov instanceof XButtonHook) {
+                Log.d("Mulin", "instance of button hook");
+                for(String buttonClass : buttonClasses){
+                    m = hook.getMethod(loadPackageParam.classLoader.loadClass(buttonClass));
+                    XposedBridge.hookMethod(m, hook.getCallback());
+                }
+            } else{
+                m = hook.getMethod(loadPackageParam.classLoader.loadClass(hook.getClassName()));
+                XposedBridge.hookMethod(m, hook.getCallback());
+            }
+
+
             Log.d("Mulin", "handleLoadPackage: once");
         }
 

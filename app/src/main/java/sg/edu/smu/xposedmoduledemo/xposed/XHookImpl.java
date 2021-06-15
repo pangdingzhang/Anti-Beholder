@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import sg.edu.smu.xposedmoduledemo.DBHelper;
@@ -21,6 +22,7 @@ import sg.edu.smu.xposedmoduledemo.MainActivity;
 import sg.edu.smu.xposedmoduledemo.hooks.HookTemplate;
 
 import java.lang.reflect.Member;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -32,16 +34,23 @@ public class XHookImpl implements XHook {
     private final String packageName;
     private final HookTemplate prov;
     private XC_LoadPackage.LoadPackageParam loadPackageParam;
-    private Toast toast;
     private TextReceiver mTextReceiver;
     private SharedPreferences pref;
+    private SharedPreferences pref2;
     private DBHelper dbHelper;
+    private ButtonSingleton buttonSingleton;
 
     public XHookImpl(HookTemplate prov2, String packageName2, XC_LoadPackage.LoadPackageParam loadPackageParam, TextReceiver textReceiver) {
         this.prov = prov2;
         this.packageName = packageName2;
         this.loadPackageParam = loadPackageParam;
         this.mTextReceiver = textReceiver;
+    }
+    public XHookImpl(HookTemplate prov2, String packageName2, XC_LoadPackage.LoadPackageParam loadPackageParam, ButtonSingleton buttonSingleton) {
+        this.prov = prov2;
+        this.packageName = packageName2;
+        this.loadPackageParam = loadPackageParam;
+        this.buttonSingleton = buttonSingleton;
     }
 
     @Override
@@ -50,64 +59,42 @@ public class XHookImpl implements XHook {
             public void beforeHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
 
 
-
-//                Cursor cursor = db.query("permission_db", null, null, null, null, null, null);
-//                String[] tableColumns = new String[]{"time"};
-//                String whereClause = "package_name = ? AND permission = ?";
-//                String[] whereArgs = new String[]{"sg.edu.smu.permissionrequestapp","READ_CONTACTS"};
-//                Cursor cursor1 = db.query("permission_db", tableColumns, whereClause, whereArgs,null,null,null);
-
-//                if (cursor1.moveToFirst()){
-//                    do {
-//                        Long time = cursor1.getLong(cursor1.getColumnIndex("time"));
-//                        String dateAsString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-//                                .format(new Date(time));
-//                        Log.d("Mulin", "TEST TEST TEST This is the last record in db - time "+time);
-//                    } while (cursor1.moveToNext());
-//                }
-
-
-//                XposedHelpers.findAndHookMethod(View.class ,"setOnClickListener", View.OnClickListener.class, new XC_MethodHook() {
-//                    @Override
-//                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-//                        View view = (View)param.thisObject;
-//                        //ImageView
-//                        String Str = null;
-//                        if (view instanceof TextView){//也有可能是ImageView，所以得判断一下
-//                            Str = ((TextView)view).getText().toString();
-//                        }
-//                        int btnId = view.getId();
-//                        Log.i("ButtonInfo", Str + " " + btnId);
-//
-//                    }
-//                });
-
                 Object instance = param.thisObject;
                 Object[] args = param.args;
 
                 if (XHookImpl.this.prov.shouldHook(instance, args)) {
+                    //dynamically register the broadcast
+                    IntentFilter filter = new IntentFilter();
+                    filter.addAction("Click_Event");
+                    AndroidAppHelper.currentApplication().registerReceiver(mTextReceiver, filter);
+
                     Context vxContext = AndroidAppHelper.currentApplication().getApplicationContext().createPackageContext("sg.edu.smu.xposedmoduledemo", 0);
                     pref = vxContext.getSharedPreferences("permission_info",Context.MODE_PRIVATE);
+                    pref2 = vxContext.getSharedPreferences("button_permission_info",Context.MODE_PRIVATE);
+                    SharedPreferences.Editor pref2_editor = pref2.edit();
+                    pref2_editor.putString("sg.edu.smu.permissionrequestappREAD_CONTACTS2131230807","2");
+                    pref2_editor.putString("streetdirectory.mobileACCESS_FINE_LOCATION2131230754","2");
+                    pref2_editor.apply();
                     dbHelper = new DBHelper(vxContext, "Permission.db", null, 1);
                     SQLiteDatabase db = dbHelper.getWritableDatabase();
                     ContentValues values = new ContentValues();
+                    //store the permission access record into db
                     values.put("package_name", packageName);
                     values.put("permission", prov.toString());
                     values.put("time", (System.currentTimeMillis()));
                     db.insert("permission_db", null, values);
                     values.clear();
+
                     Log.d("Mulin", "beforeHookedMethod: " + packageName + "is trying to obtain " + prov);
                     final int[] result = {0};
-//                    result[0] = 3; // 3 means fake
-                    result[0] = Integer.parseInt(pref.getString(packageName+prov.toString(),"0"));
-                    XHookImpl.this.hasHooked = true;
-                    XHookImpl.this.prov.beforeInvocation(param, result[0]);
+//                    result[0] = Integer.parseInt(pref.getString(packageName+prov.toString(),"0"));
 
-                    IntentFilter filter = new IntentFilter();
-                    filter.addAction("Click_Event");
-                    AndroidAppHelper.currentApplication().registerReceiver(mTextReceiver, filter);
+
+
+
                     String buttonClass = "";
-                    // Test get stack trace to get the button name
+
+                    // Use stack trace to get the button clicking event
                     StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
                     for(StackTraceElement e : stacktrace){
 //                    Log.d("Mulin", e.getClassName()+"   "+e.getMethodName());
@@ -116,9 +103,30 @@ public class XHookImpl implements XHook {
                             break;
                         }
                     }
-                    XButtonHook xbuttonHook = new XButtonHook();
-                    XposedHelpers.findAndHookMethod(buttonClass,
-                            loadPackageParam.classLoader,"onClick", View.class,xbuttonHook.getCallback());
+                    Log.d("Mulin", "button class is "+buttonClass);
+//                    XposedHelpers.findAndHookMethod(buttonClass,
+//                            loadPackageParam.classLoader,"onClick", View.class,XButtonHook.getCallback());
+//                    Log.d("Mulin", "button id is " + packageName+prov.toString()+ButtonSingleton.getInstance().getId());
+//                    result[0] = Integer.parseInt(pref2.getString(packageName+prov.toString()+ButtonSingleton.getInstance().getId(),
+//                            pref.getString(packageName+prov.toString(),"0")));
+//
+//                    Class c = Class.forName("sg.edu.smu.permissionrequestapp.MainActivity$1");
+//                    Method method = c.getDeclaredMethod("onClick",View.class);
+//                    XposedBridge.hookMethod(method, XButtonHook.getCallback());
+
+//                    XButtonHook xbuttonHook = new XButtonHook();
+
+//                    XposedHelpers.findAndHookMethod(XposedHelpers.findClass(buttonClass,loadPackageParam.classLoader),
+//                            "onClick", View.class, XButtonHook.getCallback());
+                    result[0] = Integer.parseInt(pref2.getString(packageName+prov.toString()+ButtonSingleton.getInstance().getId(),
+                            pref.getString(packageName+prov.toString(),"0")));
+
+
+                    Log.d("Mulin", "result 0 is : "+result[0]);
+                    XHookImpl.this.hasHooked = true;
+                    XHookImpl.this.prov.beforeInvocation(param, result[0]);
+
+
 
                 }
             }
@@ -130,7 +138,8 @@ public class XHookImpl implements XHook {
                 if (XHookImpl.this.hasHooked) {
                     XHookImpl.this.prov.afterInvocation(param);
                 }
-                Log.d("Mulin", "Hook Complete");
+
+                Log.d("Mulin", "Hook Complete\n-----------------------");
 
             }
         };

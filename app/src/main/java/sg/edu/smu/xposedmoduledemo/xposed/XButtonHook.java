@@ -13,44 +13,68 @@ import java.lang.reflect.Member;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
+import sg.edu.smu.xposedmoduledemo.hooks.HookTemplate;
 
-public class XButtonHook {
+public class XButtonHook implements HookTemplate {
     public Object view;
     public Button v;
-    Toast toast;
+    ButtonSingleton buttonSingleton;
 
-    public  XC_MethodHook getCallback() {
+    public  static XC_MethodHook getCallback() {
         return new XC_MethodHook() {
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                view = param.args[0];
-                v  = (Button) view;
-                Intent intent = new Intent("Click_Event");
-                Bundle bundle=new Bundle();
-                bundle.putString("BUTTON_TEXT",v.getText().toString());
+                Log.d("Mulin", "button hook is called once");
+                Object view = param.args[0];
+                Button v  = (Button) view;
+                ButtonSingleton.getInstance().setValue(v.getId(),v.getText().toString());
+//                Intent intent = new Intent("Click_Event");
+//                Bundle bundle=new Bundle();
+//                bundle.putString("BUTTON_TEXT",v.getText().toString());
+//                bundle.putInt("BUTTON_ID", v.getId());
+//
+//                intent.putExtra("Bundle", bundle);
+//                AndroidAppHelper.currentApplication().sendBroadcast(intent);
 
-                intent.putExtra("Bundle", bundle);
-                AndroidAppHelper.currentApplication().sendBroadcast(intent);
-//                Log.d("Mulin", "You just clicked "+ v.getText().toString());
-//                Context context = (Context) AndroidAppHelper.currentApplication();
-//                Toast.makeText(context, v.getText().toString(), Toast.LENGTH_SHORT).show();
-//                showAToast(v.getText().toString());
+
             }
         };
+        // the id of button u just click == one of the button id in the config file
     }
 
-    public String getButtontext(){
-        return v.getText().toString();
-    }
-    public Button getButton(){
-        return v;
+    @Override
+    public void afterInvocation(XC_MethodHook.MethodHookParam methodHookParam) {
+
     }
 
-    public void showAToast (String message){
-        if (toast != null) {
-            toast.cancel();
+    @Override
+    public void beforeInvocation(XC_MethodHook.MethodHookParam methodHookParam, int i) {
+        Object view = methodHookParam.args[0];
+        Button v  = (Button) view;
+        Log.d("Mulin", "you just click button "+ v.getId());
+        ButtonSingleton.getInstance().setValue(v.getId(),v.getText().toString());
+    }
+
+    @Override
+    public Member getCallable(Class<?> cls) {
+        try {
+            return cls.getMethod("onClick", View.class);
+        } catch (NoSuchMethodException e) {
+            return null;
         }
-        Context context = (Context) AndroidAppHelper.currentApplication();
-        toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
-        toast.show();
+    }
+
+    @Override
+    public String getClassName() {
+        return null;
+    }
+
+    @Override
+    public int getOp() {
+        return 0;
+    }
+
+    @Override
+    public boolean shouldHook(Object obj, Object... objArr) {
+        return true;
     }
 }

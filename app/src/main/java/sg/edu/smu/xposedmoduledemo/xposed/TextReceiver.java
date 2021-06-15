@@ -10,15 +10,17 @@ import android.widget.Toast;
 public class TextReceiver extends BroadcastReceiver {
     String text;
     Toast toast;
+    int buttonId;
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if(action.equals("Click_Event")){
             Bundle bundle = intent.getBundleExtra("Bundle");
-            if (!bundle.getString("BUTTON_TEXT").equals(text)) {
-                text = bundle.getString("BUTTON_TEXT");
-            }
-            showAToast(context,text);
+
+            text = bundle.getString("BUTTON_TEXT");
+            buttonId = bundle.getInt("BUTTON_ID");
+
+            showAToast(context,text+buttonId);
 
         }
     }
@@ -30,5 +32,13 @@ public class TextReceiver extends BroadcastReceiver {
 
         toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
         toast.show();
+    }
+
+    public int getButtonId() {
+        return buttonId;
+    }
+
+    public String getText() {
+        return text;
     }
 }
