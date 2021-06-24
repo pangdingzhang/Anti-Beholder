@@ -9,16 +9,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.XposedModuleDemo">
+        <receiver
+            android:name=".xposed.DecisionReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
+
+        <service
+            android:name=".services.MyService"
+            android:enabled="true"
+            android:exported="true" />
 
         <meta-data
             android:name="xposedmodule"
-            android:value="true"/>
+            android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="I am Mulin"/>
+            android:value="I am Mulin" />
         <meta-data
             android:name="xposedminversion"
-            android:value="53"/>
+            android:value="53" />
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -27,7 +36,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

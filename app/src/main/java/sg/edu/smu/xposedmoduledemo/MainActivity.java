@@ -6,13 +6,18 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.AndroidAppHelper;
 import android.app.ListActivity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -41,6 +46,7 @@ import java.util.List;
 
 import sg.edu.smu.xposedmoduledemo.UI.HistoryPageFragment;
 import sg.edu.smu.xposedmoduledemo.UI.SettingPageFragment;
+import sg.edu.smu.xposedmoduledemo.services.MyService;
 import sg.edu.smu.xposedmoduledemo.xposed.MyAppInfo;
 
 public class MainActivity extends AppCompatActivity {
@@ -56,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
     private FragmentTransaction transaction;
     private FragmentManager fragmentManager;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +78,10 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bv);
         bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+
+        Intent startServiceIntent = new Intent(this, MyService.class);
+        startService(startServiceIntent);
+
         //setting page is an activity
 //        lv_app_list = (ExpandableListView) findViewById(R.id.lv_app_list);
 //        Display newDisplay = getWindowManager().getDefaultDisplay();
@@ -83,6 +95,11 @@ public class MainActivity extends AppCompatActivity {
 //        editor = pref.edit();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("Mulin", "MainActivity on destory");
+    }
 //    private void initAppList() {
 //        new Thread() {
 //            @Override

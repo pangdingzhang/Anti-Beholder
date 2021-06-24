@@ -11,7 +11,9 @@ import android.widget.Toast;
 import com.google.common.collect.Lists;
 
 import java.lang.reflect.Member;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -23,6 +25,8 @@ import sg.edu.smu.xposedmoduledemo.hooks.FineLocationHook;
 import sg.edu.smu.xposedmoduledemo.hooks.HookTemplate;
 
 import sg.edu.smu.xposedmoduledemo.hooks.LocationUpdate;
+import sg.edu.smu.xposedmoduledemo.xposed.AccessNotificationSingleton;
+import sg.edu.smu.xposedmoduledemo.xposed.ButtonHookProvider;
 import sg.edu.smu.xposedmoduledemo.xposed.ButtonSingleton;
 import sg.edu.smu.xposedmoduledemo.xposed.TextReceiver;
 import sg.edu.smu.xposedmoduledemo.xposed.XButtonHook;
@@ -35,9 +39,9 @@ import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 
 public class HelloXp implements IXposedHookLoadPackage {
     private final List<HookTemplate> hooks = Lists.newArrayList();
-    private final TextReceiver textReceiver = new TextReceiver();
+    private AccessNotificationSingleton accessNotificationSingleton = new AccessNotificationSingleton();
     private ButtonSingleton buttonSingleton = new ButtonSingleton();
-    private final List<String> buttonClasses = Lists.newArrayList();
+    private final Map<String, String> buttonClasses = new HashMap<>();
 
     public HelloXp() {
         loadAllHooks();
@@ -45,39 +49,35 @@ public class HelloXp implements IXposedHookLoadPackage {
     }
 
     private void loadAllHooks() {
-        for (HookTemplate prov : new HookTemplate[]{new Contacts(), new FineLocationHook(), new LocationUpdate(), new XButtonHook()}) {
-            this.hooks.add(prov);
+        for (HookTemplate priv : new HookTemplate[]{new Contacts(), new FineLocationHook(), new LocationUpdate(), new XButtonHook()}) {
+            this.hooks.add(priv);
         }
     }
 
     private void loadButtons(){
-        buttonClasses.add("sg.edu.smu.permissionrequestapp.MainActivity$1");
-        buttonClasses.add("sg.edu.smu.permissionrequestapp.MainActivity$2");
+        buttonClasses.put("sg.edu.smu.permissionrequestapp.MainActivity$1","READ_CONTACTS");
+        buttonClasses.put("sg.edu.smu.permissionrequestapp.MainActivity$2","READ_CONTACTS");
     }
 
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
-        XHook hook;
-        String className;
         Member m;
-        Toast toast = null;
 
-
-
-//        XContextHook.hook(loadPackageParam.classLoader);
-
-        for (HookTemplate prov : this.hooks) {
+        for (HookTemplate priv : this.hooks) {
 //            hook = new XHookImpl(prov, loadPackageParam.packageName,loadPackageParam,textReceiver);
-            hook = new XHookImpl(prov, loadPackageParam.packageName,loadPackageParam,buttonSingleton);
+
             Log.d("Mulin", "handleLoadPackage: "+loadPackageParam.packageName);
 
             // here button hook is treated differently bcz it get class name from a different place
-            if (prov instanceof XButtonHook) {
+            if (priv instanceof XButtonHook) {
                 Log.d("Mulin", "instance of button hook");
-                for(String buttonClass : buttonClasses){
+                ButtonHookProvider hook = new ButtonHookProvider(priv, loadPackageParam.packageName);
+                for(String buttonClass : buttonClasses.keySet()){
+                    hook.setPermission((String) buttonClasses.get(buttonClass));
                     m = hook.getMethod(loadPackageParam.classLoader.loadClass(buttonClass));
                     XposedBridge.hookMethod(m, hook.getCallback());
                 }
             } else{
+                XHook hook = new XHookImpl(priv, loadPackageParam.packageName,loadPackageParam,buttonSingleton,accessNotificationSingleton);
                 m = hook.getMethod(loadPackageParam.classLoader.loadClass(hook.getClassName()));
                 XposedBridge.hookMethod(m, hook.getCallback());
             }

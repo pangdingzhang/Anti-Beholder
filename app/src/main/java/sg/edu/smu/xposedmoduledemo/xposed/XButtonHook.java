@@ -16,30 +16,6 @@ import de.robv.android.xposed.XposedHelpers;
 import sg.edu.smu.xposedmoduledemo.hooks.HookTemplate;
 
 public class XButtonHook implements HookTemplate {
-    public Object view;
-    public Button v;
-    ButtonSingleton buttonSingleton;
-
-    public  static XC_MethodHook getCallback() {
-        return new XC_MethodHook() {
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                Log.d("Mulin", "button hook is called once");
-                Object view = param.args[0];
-                Button v  = (Button) view;
-                ButtonSingleton.getInstance().setValue(v.getId(),v.getText().toString());
-//                Intent intent = new Intent("Click_Event");
-//                Bundle bundle=new Bundle();
-//                bundle.putString("BUTTON_TEXT",v.getText().toString());
-//                bundle.putInt("BUTTON_ID", v.getId());
-//
-//                intent.putExtra("Bundle", bundle);
-//                AndroidAppHelper.currentApplication().sendBroadcast(intent);
-
-
-            }
-        };
-        // the id of button u just click == one of the button id in the config file
-    }
 
     @Override
     public void afterInvocation(XC_MethodHook.MethodHookParam methodHookParam) {

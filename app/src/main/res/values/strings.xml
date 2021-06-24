@@ -1,10 +1,14 @@
 <resources>
     <string name="app_name">XposedModuleDemo</string>
-    <string name="accessibility_service_label">Xposed Accessibility Service</string>
-    <string name="as_description">Accessibility service used in virtual xposed</string>
+    <string name="decision_dialog_title">Decision</string>
+    <string name="allow">Allow</string>
+    <string name="deny">Deny</string>
+    <string name="fake">Fake</string>
     <string-array name="option_array">
         <item>Allow</item>
         <item>Deny</item>
         <item>Fake</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
