@@ -7,6 +7,7 @@ public class MyAppInfo {
     private String appName;
     private String[] appPermission;
     private String packageName;
+    private int uid;
 
     public MyAppInfo(Drawable image, String appName, String[] appPermission) {
         this.image = image;
@@ -49,5 +50,13 @@ public class MyAppInfo {
 
     public void setPackageName(String packageName) {
         this.packageName = packageName;
+    }
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
     }
 }

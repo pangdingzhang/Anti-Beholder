@@ -146,7 +146,7 @@ public class SettingPageFragment extends Fragment {
             }
 
             mViewHolder.iv_app_icon.setImageDrawable(myAppInfo.getImage());
-            mViewHolder.tx_app_name.setText(myAppInfo.getAppName());
+            mViewHolder.tx_app_name.setText(myAppInfo.getAppName() + myAppInfo.getUid());
             mViewHolder.tx_app_description.removeAllViews();
             addPermissionIcons(myAppInfo.getAppPermission());
 
