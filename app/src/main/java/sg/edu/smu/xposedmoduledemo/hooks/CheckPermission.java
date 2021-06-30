@@ -1,6 +1,5 @@
 package sg.edu.smu.xposedmoduledemo.hooks;
 
-import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
@@ -9,34 +8,25 @@ import java.lang.reflect.Member;
 
 import de.robv.android.xposed.XC_MethodHook;
 
-public class CheckSelfPermission implements HookTemplate{
+public class CheckPermission implements HookTemplate{
     int result;
     @Override
     public void afterInvocation(XC_MethodHook.MethodHookParam methodHookParam) {
-        Log.d("Mulin", "after CheckSelfPermission");
-        if (result == 0) {
-            Log.d("Mulin", "afterInvocation: result is 0");
-            methodHookParam.setResult(PackageManager.PERMISSION_GRANTED);
-        } else if (result == 1) {
-            Log.d("Mulin", "afterInvocation: result is 1");
-            methodHookParam.setResult(PackageManager.PERMISSION_DENIED);
-        } else {
-            Log.d("Mulin", "afterInvocation: result is "+result);
+        Log.d("Mulin", "afterInvocation"+((int[]) methodHookParam.args[2])[0]);
 
-        }
     }
 
     @Override
     public void beforeInvocation(XC_MethodHook.MethodHookParam methodHookParam, int i) {
-        Log.d("Mulin", "before CheckSelfPermission");
+        Log.d("Mulin", "before onRequestPermissionsResult");
         this.result = i;
     }
 
     @Override
     public Member getCallable(Class<?> cls) {
         try {
-            Log.d("Mulin", "getCallable: checkSelfPermission");
-            return cls.getMethod("checkSelfPermission", Context.class, String.class);
+            Log.d("Mulin", "getCallable: onRequestPermissionsResult");
+            return cls.getMethod("onRequestPermissionsResult", int.class, String[].class, int[].class);
         }catch (NoSuchMethodException e){
             e.printStackTrace();
             return null;
@@ -45,7 +35,7 @@ public class CheckSelfPermission implements HookTemplate{
 
     @Override
     public String getClassName() {
-        return "androidx.core.content.ContextCompat";
+        return "sg.edu.smu.permissionrequestapp.MainActivity";
     }
 
     @Override
