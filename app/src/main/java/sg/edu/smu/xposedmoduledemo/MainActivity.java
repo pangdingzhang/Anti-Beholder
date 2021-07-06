@@ -120,6 +120,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void addPermissionList(List<MyAppInfo> myAppInfos){
+        SharedPreferences pref = this.getSharedPreferences("permission_info",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+
+
         for (MyAppInfo myAppInfo : myAppInfos){
             String[] permissionArray = myAppInfo.getAppPermission();
             List<String> shortNameList = new ArrayList<>();
@@ -128,6 +132,9 @@ public class MainActivity extends AppCompatActivity {
                 if (!permission.equals("No dangerous permission")) {
                     shortName = permission.substring(19);
                     shortNameList.add(shortName);
+                    //in the future, we should remove below two lines code, which are used to assign default values to sharedpreference
+                    editor.putString(myAppInfo.getPackageName()+shortName,"2");
+                    editor.apply();
                     continue;
                 }
                 shortNameList.add(shortName);
