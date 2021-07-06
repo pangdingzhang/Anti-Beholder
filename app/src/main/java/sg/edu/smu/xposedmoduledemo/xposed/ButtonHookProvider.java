@@ -1,6 +1,7 @@
 package sg.edu.smu.xposedmoduledemo.xposed;
 
 import android.app.AndroidAppHelper;
+import android.app.AppOpsManager;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -51,7 +53,6 @@ public class ButtonHookProvider implements XHook {
                     bundle.putString("PERMISSION_NAME", ButtonHookProvider.this.toString());
                     intent.putExtra("Bundle", bundle);
                     vxContext.sendBroadcast(intent);
-
                     if (decisionReceiver == null) {
                         decisionReceiver = new BroadcastReceiver() {
                             @Override
@@ -67,6 +68,7 @@ public class ButtonHookProvider implements XHook {
                                             Log.d("Mulin", "just put "+packageName + ButtonHookProvider.this.toString() + ButtonSingleton.getInstance().getId());
                                             break;
                                         case "Deny":
+//
                                             pref2_editor.putString(packageName + ButtonHookProvider.this.toString() + ButtonSingleton.getInstance().getId(), "1");
                                             break;
                                         case "Fake":
@@ -89,7 +91,7 @@ public class ButtonHookProvider implements XHook {
 //                    vxContext.registerReceiver(decisionReceiver, intentFilter);
                     vxContext.registerReceiver(decisionReceiver, intentFilter, null, handler);
                     Log.d("Mulin", "sleep begin");
-                    Thread.sleep(5000);
+                    Thread.sleep(4000);
                     Log.d("Mulin", "sleep end");
                 }
             }

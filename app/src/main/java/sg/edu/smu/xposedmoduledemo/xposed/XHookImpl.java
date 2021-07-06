@@ -89,10 +89,10 @@ public class XHookImpl implements XHook {
                     Context vxContext = AndroidAppHelper.currentApplication().getApplicationContext().createPackageContext("sg.edu.smu.xposedmoduledemo", 0);
                     pref = vxContext.getSharedPreferences("permission_info",Context.MODE_PRIVATE);
                     pref2 = vxContext.getSharedPreferences("button_permission_info",Context.MODE_PRIVATE);
-                    SharedPreferences.Editor pref2_editor = pref2.edit();
+//                    SharedPreferences.Editor pref2_editor = pref2.edit();
 //                    pref2_editor.putString("sg.edu.smu.permissionrequestappREAD_CONTACTS2131230807","2");
-                    pref2_editor.putString("streetdirectory.mobileACCESS_FINE_LOCATION2131230754","2");
-                    pref2_editor.apply();
+//                    pref2_editor.putString("streetdirectory.mobileACCESS_FINE_LOCATION2131230754","2");
+//                    pref2_editor.apply();
                     dbHelper = new DBHelper(vxContext, "Permission.db", null, 1);
                     SQLiteDatabase db = dbHelper.getWritableDatabase();
                     ContentValues values = new ContentValues();

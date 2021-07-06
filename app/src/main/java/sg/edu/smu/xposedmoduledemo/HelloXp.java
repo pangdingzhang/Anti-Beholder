@@ -1,12 +1,6 @@
 package sg.edu.smu.xposedmoduledemo;
 
-import android.content.Context;
-import android.content.Intent;
-import android.provider.Settings;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.common.collect.Lists;
 
@@ -16,21 +10,20 @@ import java.util.List;
 import java.util.Map;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
-import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
-import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import sg.edu.smu.xposedmoduledemo.hooks.CheckPermission;
+import sg.edu.smu.xposedmoduledemo.hooks.CheckSelfPermission;
 import sg.edu.smu.xposedmoduledemo.hooks.Contacts;
 import sg.edu.smu.xposedmoduledemo.hooks.FineLocationHook;
 import sg.edu.smu.xposedmoduledemo.hooks.HookTemplate;
 
 import sg.edu.smu.xposedmoduledemo.hooks.LocationUpdate;
 import sg.edu.smu.xposedmoduledemo.xposed.AccessNotificationSingleton;
+import sg.edu.smu.xposedmoduledemo.xposed.AppOpsHookProvider;
 import sg.edu.smu.xposedmoduledemo.xposed.ButtonHookProvider;
 import sg.edu.smu.xposedmoduledemo.xposed.ButtonSingleton;
-import sg.edu.smu.xposedmoduledemo.xposed.TextReceiver;
 import sg.edu.smu.xposedmoduledemo.xposed.XButtonHook;
-import sg.edu.smu.xposedmoduledemo.xposed.XContextHook;
 import sg.edu.smu.xposedmoduledemo.xposed.XHook;
 import sg.edu.smu.xposedmoduledemo.xposed.XHookImpl;
 
@@ -42,10 +35,12 @@ public class HelloXp implements IXposedHookLoadPackage {
     private AccessNotificationSingleton accessNotificationSingleton = new AccessNotificationSingleton();
     private ButtonSingleton buttonSingleton = new ButtonSingleton();
     private final Map<String, String> buttonClasses = new HashMap<>();
+    private final List<HookTemplate> permissionHooks = Lists.newArrayList();
 
     public HelloXp() {
         loadAllHooks();
         loadButtons();
+        loadPermissionHooks();
     }
 
     private void loadAllHooks() {
@@ -54,13 +49,27 @@ public class HelloXp implements IXposedHookLoadPackage {
         }
     }
 
+    private void loadPermissionHooks(){
+        for (HookTemplate priv : new HookTemplate[]{new CheckSelfPermission(), new CheckPermission()}) {
+            this.permissionHooks.add(priv);
+        }
+    }
+
     private void loadButtons(){
         buttonClasses.put("sg.edu.smu.permissionrequestapp.MainActivity$1","READ_CONTACTS");
         buttonClasses.put("sg.edu.smu.permissionrequestapp.MainActivity$2","READ_CONTACTS");
+//        buttonClasses.put("streetdirectory.mobile.gis.maps.MapView$4", "ACCESS_FINE_LOCATION");
     }
 
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
         Member m;
+
+
+        for (HookTemplate priv : this.permissionHooks) {
+            AppOpsHookProvider appOpsHookProvider = new AppOpsHookProvider(priv, loadPackageParam.packageName);
+            Member method = appOpsHookProvider.getMethod(loadPackageParam.classLoader.loadClass(appOpsHookProvider.getClassName()));
+            XposedBridge.hookMethod(method, appOpsHookProvider.getCallback());
+        }
 
         for (HookTemplate priv : this.hooks) {
 //            hook = new XHookImpl(prov, loadPackageParam.packageName,loadPackageParam,textReceiver);

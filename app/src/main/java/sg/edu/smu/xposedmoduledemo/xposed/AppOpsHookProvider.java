@@ -1,16 +1,13 @@
 package sg.edu.smu.xposedmoduledemo.xposed;
 
 import android.app.AndroidAppHelper;
-import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 
 import de.robv.android.xposed.XC_MethodHook;
-import sg.edu.smu.xposedmoduledemo.SMUAppOps;
 import sg.edu.smu.xposedmoduledemo.hooks.CheckSelfPermission;
 import sg.edu.smu.xposedmoduledemo.hooks.HookTemplate;
 
