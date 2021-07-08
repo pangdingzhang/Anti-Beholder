@@ -46,6 +46,7 @@ import java.util.List;
 
 import sg.edu.smu.xposedmoduledemo.UI.HistoryPageFragment;
 import sg.edu.smu.xposedmoduledemo.UI.SettingPageFragment;
+import sg.edu.smu.xposedmoduledemo.UI.TimelineFragment;
 import sg.edu.smu.xposedmoduledemo.services.MyService;
 import sg.edu.smu.xposedmoduledemo.xposed.MyAppInfo;
 
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                     transaction.commit();
                     return true;
                 case R.id.item_history:
-                    transaction.replace(R.id.fragment_container, new HistoryPageFragment(appInfos,permissionList));
+                    transaction.replace(R.id.fragment_container, new TimelineFragment());
                     transaction.commit();
                     return true;
             }
