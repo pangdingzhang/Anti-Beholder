@@ -6,8 +6,10 @@ import com.google.common.collect.Lists;
 
 import java.lang.reflect.Member;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XposedBridge;
@@ -36,6 +38,7 @@ public class HelloXp implements IXposedHookLoadPackage {
     private ButtonSingleton buttonSingleton = new ButtonSingleton();
     private final Map<String, String> buttonClasses = new HashMap<>();
     private final List<HookTemplate> permissionHooks = Lists.newArrayList();
+    private final Set<String> activities = new HashSet<>();
 
     public HelloXp() {
         loadAllHooks();
@@ -58,7 +61,12 @@ public class HelloXp implements IXposedHookLoadPackage {
     private void loadButtons(){
         buttonClasses.put("sg.edu.smu.permissionrequestapp.MainActivity$1","READ_CONTACTS");
         buttonClasses.put("sg.edu.smu.permissionrequestapp.MainActivity$2","READ_CONTACTS");
-//        buttonClasses.put("streetdirectory.mobile.gis.maps.MapView$4", "ACCESS_FINE_LOCATION");
+        buttonClasses.put("streetdirectory.mobile.gis.maps.MapView$4", "ACCESS_FINE_LOCATION");
+    }
+
+    private void loadActivies(){
+        activities.add("streetdirectory.mobile.modules.map.MapActivity");
+        activities.add("sg.edu.smu.permissionrequestapp.MainActivity");
     }
 
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
@@ -67,8 +75,24 @@ public class HelloXp implements IXposedHookLoadPackage {
 
         for (HookTemplate priv : this.permissionHooks) {
             AppOpsHookProvider appOpsHookProvider = new AppOpsHookProvider(priv, loadPackageParam.packageName);
-            Member method = appOpsHookProvider.getMethod(loadPackageParam.classLoader.loadClass(appOpsHookProvider.getClassName()));
-            XposedBridge.hookMethod(method, appOpsHookProvider.getCallback());
+            // activity class name will be gotten from static analysis
+            if (priv instanceof CheckPermission){
+                for (String activityClassName : activities){
+                    if(activityClassName.startsWith(loadPackageParam.packageName)){
+                        Member method = appOpsHookProvider.getMethod(loadPackageParam.classLoader.loadClass(activityClassName));
+                        XposedBridge.hookMethod(method, appOpsHookProvider.getCallback());
+                    }
+                }
+            } else {
+                Member method = appOpsHookProvider.getMethod(loadPackageParam.classLoader.loadClass(appOpsHookProvider.getClassName()));
+                XposedBridge.hookMethod(method, appOpsHookProvider.getCallback());
+            }
+//            try{
+//                Member method = appOpsHookProvider.getMethod(loadPackageParam.classLoader.loadClass(appOpsHookProvider.getClassName()));
+//                XposedBridge.hookMethod(method, appOpsHookProvider.getCallback());
+//            }catch (ClassNotFoundException e){
+//                Need to print stack trace
+//            }
         }
 
         for (HookTemplate priv : this.hooks) {
@@ -81,9 +105,13 @@ public class HelloXp implements IXposedHookLoadPackage {
                 Log.d("Mulin", "instance of button hook");
                 ButtonHookProvider hook = new ButtonHookProvider(priv, loadPackageParam.packageName);
                 for(String buttonClass : buttonClasses.keySet()){
-                    hook.setPermission((String) buttonClasses.get(buttonClass));
-                    m = hook.getMethod(loadPackageParam.classLoader.loadClass(buttonClass));
-                    XposedBridge.hookMethod(m, hook.getCallback());
+                    //only load buttons of current package
+                    if (buttonClass.startsWith(loadPackageParam.packageName)){
+                        hook.setPermission((String) buttonClasses.get(buttonClass));
+                        m = hook.getMethod(loadPackageParam.classLoader.loadClass(buttonClass));
+                        XposedBridge.hookMethod(m, hook.getCallback());
+                    }
+
                 }
             } else{
                 XHook hook = new XHookImpl(priv, loadPackageParam.packageName,loadPackageParam,buttonSingleton,accessNotificationSingleton);

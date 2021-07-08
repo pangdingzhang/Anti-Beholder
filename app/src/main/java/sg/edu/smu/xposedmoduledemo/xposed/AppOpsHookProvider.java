@@ -45,13 +45,12 @@ public class AppOpsHookProvider implements XHook{
 
                 } else{
                     //for checkPermission, the first argument is permission
-
                     for (int i = 0; i < ((String[]) param.args[1]).length; i++){
                         permission = ((String[]) param.args[1])[i].substring(19);
                         Log.d("Mulin", "onRequestPermissionsResult permission is "+permission);
                         int result = Integer.parseInt(pref2.getString(packageName+permission+ButtonSingleton.getInstance().getId(),
                                 pref.getString(packageName+permission,"3")));
-                        ((int[]) param.args[2])[i] = result == 0 ? 0 : -1;
+                        ((int[]) param.args[2])[i] = result == -1 ? -1: 0;
                         Log.d("Mulin", "onRequestPermissionsResult after modification, the result is "+((int[]) param.args[2])[i]);
                     }
                 }

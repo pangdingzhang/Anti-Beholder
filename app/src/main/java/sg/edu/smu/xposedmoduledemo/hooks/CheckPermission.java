@@ -35,7 +35,8 @@ public class CheckPermission implements HookTemplate{
 
     @Override
     public String getClassName() {
-        return "sg.edu.smu.permissionrequestapp.MainActivity";
+        return "streetdirectory.mobile.modules.map.MapActivity";
+//        return "sg.edu.smu.permissionrequestapp.MainActivity";
     }
 
     @Override
