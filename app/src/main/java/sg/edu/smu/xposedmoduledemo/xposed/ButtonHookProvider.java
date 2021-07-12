@@ -20,6 +20,7 @@ import java.lang.reflect.Member;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import sg.edu.smu.xposedmoduledemo.hooks.HookTemplate;
+import sg.edu.smu.xposedmoduledemo.util.Util;
 
 public class ButtonHookProvider implements XHook {
     private  HookTemplate prov;
@@ -90,9 +91,15 @@ public class ButtonHookProvider implements XHook {
                     IntentFilter intentFilter = new IntentFilter("ACTION");
 //                    vxContext.registerReceiver(decisionReceiver, intentFilter);
                     vxContext.registerReceiver(decisionReceiver, intentFilter, null, handler);
-                    Log.d("Mulin", "sleep begin");
-                    Thread.sleep(4000);
-                    Log.d("Mulin", "sleep end");
+                    if(Util.isAppRunning(vxContext, "sg.edu.smu.xposedmoduledemo")){
+                        Log.d("Mulin", "Xposed module UI is open");
+                        Log.d("Mulin", "sleep begin");
+                        Thread.sleep(4000);
+                        Log.d("Mulin", "sleep end");
+                    } else{
+                        Log.d("Mulin", "Xposed module UI is not open");
+                    }
+
                 }
             }
 
