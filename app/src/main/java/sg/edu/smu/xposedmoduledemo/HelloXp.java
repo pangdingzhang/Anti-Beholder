@@ -15,6 +15,7 @@ import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import sg.edu.smu.xposedmoduledemo.hooks.CheckPermission;
+import sg.edu.smu.xposedmoduledemo.hooks.onRequestPermissionsResult;
 import sg.edu.smu.xposedmoduledemo.hooks.CheckSelfPermission;
 import sg.edu.smu.xposedmoduledemo.hooks.Contacts;
 import sg.edu.smu.xposedmoduledemo.hooks.FineLocationHook;
@@ -44,6 +45,7 @@ public class HelloXp implements IXposedHookLoadPackage {
         loadAllHooks();
         loadButtons();
         loadPermissionHooks();
+        loadActivies();
     }
 
     private void loadAllHooks() {
@@ -53,7 +55,7 @@ public class HelloXp implements IXposedHookLoadPackage {
     }
 
     private void loadPermissionHooks(){
-        for (HookTemplate priv : new HookTemplate[]{new CheckSelfPermission(), new CheckPermission()}) {
+        for (HookTemplate priv : new HookTemplate[]{new CheckPermission(), new onRequestPermissionsResult()}) {
             this.permissionHooks.add(priv);
         }
     }
@@ -76,9 +78,10 @@ public class HelloXp implements IXposedHookLoadPackage {
         for (HookTemplate priv : this.permissionHooks) {
             AppOpsHookProvider appOpsHookProvider = new AppOpsHookProvider(priv, loadPackageParam.packageName);
             // activity class name will be gotten from static analysis
-            if (priv instanceof CheckPermission){
+            if (priv instanceof onRequestPermissionsResult){
                 for (String activityClassName : activities){
                     if(activityClassName.startsWith(loadPackageParam.packageName)){
+                        Log.d("Mulin", activityClassName+" is hooked");
                         Member method = appOpsHookProvider.getMethod(loadPackageParam.classLoader.loadClass(activityClassName));
                         XposedBridge.hookMethod(method, appOpsHookProvider.getCallback());
                     }

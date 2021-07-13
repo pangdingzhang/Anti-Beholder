@@ -15,13 +15,14 @@ public class CheckSelfPermission implements HookTemplate{
     public void afterInvocation(XC_MethodHook.MethodHookParam methodHookParam) {
         Log.d("Mulin", "after CheckSelfPermission");
         if (result == 0) {
-            Log.d("Mulin", "afterInvocation: result is 0");
+            Log.d("Mulin", "CheckSelfPermission afterInvocation: result is 0");
             methodHookParam.setResult(PackageManager.PERMISSION_GRANTED);
         } else if (result == 1) {
-            Log.d("Mulin", "afterInvocation: result is 1");
+            Log.d("Mulin", "CheckSelfPermission afterInvocation: result is -1");
             methodHookParam.setResult(PackageManager.PERMISSION_DENIED);
         } else {
-            Log.d("Mulin", "afterInvocation: result is "+result);
+            methodHookParam.setResult(PackageManager.PERMISSION_GRANTED);
+            Log.d("Mulin", "CheckSelfPermission afterInvocation: other cases set result as 0");
 
         }
     }

@@ -8,6 +8,7 @@ import android.util.Log;
 import java.lang.reflect.Member;
 
 import de.robv.android.xposed.XC_MethodHook;
+import sg.edu.smu.xposedmoduledemo.hooks.CheckPermission;
 import sg.edu.smu.xposedmoduledemo.hooks.CheckSelfPermission;
 import sg.edu.smu.xposedmoduledemo.hooks.HookTemplate;
 
@@ -36,21 +37,28 @@ public class AppOpsHookProvider implements XHook{
                 SharedPreferences pref = vxContext.getSharedPreferences("permission_info",Context.MODE_PRIVATE);
                 SharedPreferences pref2 = vxContext.getSharedPreferences("button_permission_info",Context.MODE_PRIVATE);
                 Log.d("Mulin", "permission is "+param.args[1]);
-                if (priv instanceof CheckSelfPermission){
-                    //for checkSelfPermission, the second argument is permission
-                    permission = ((String) param.args[1]).substring(19);
+//                if (priv instanceof CheckSelfPermission){
+//                    //for checkSelfPermission, the second argument is permission
+//                    permission = ((String) param.args[1]).substring(19);
+//                    int result = Integer.parseInt(pref2.getString(packageName+permission+ButtonSingleton.getInstance().getId(),
+//                            pref.getString(packageName+permission,"3")));
+//                    Log.d("Mulin", "check selfpermission "+permission+" result is"+result);
+//                    AppOpsHookProvider.this.priv.beforeInvocation(param, result);
+
+                if(priv instanceof CheckPermission){
+                    permission = ((String) param.args[0]).substring(19);
                     int result = Integer.parseInt(pref2.getString(packageName+permission+ButtonSingleton.getInstance().getId(),
                             pref.getString(packageName+permission,"3")));
+                    Log.d("Mulin", "checkPermission "+permission+" result is"+result);
                     AppOpsHookProvider.this.priv.beforeInvocation(param, result);
-
                 } else{
-                    //for checkPermission, the first argument is permission
+                    //for onRequestPermissionResult, the first argument is permission
                     for (int i = 0; i < ((String[]) param.args[1]).length; i++){
                         permission = ((String[]) param.args[1])[i].substring(19);
                         Log.d("Mulin", "onRequestPermissionsResult permission is "+permission);
                         int result = Integer.parseInt(pref2.getString(packageName+permission+ButtonSingleton.getInstance().getId(),
                                 pref.getString(packageName+permission,"3")));
-                        ((int[]) param.args[2])[i] = result == -1 ? -1: 0;
+                        ((int[]) param.args[2])[i] = result == 1 ? -1: 0;
                         Log.d("Mulin", "onRequestPermissionsResult after modification, the result is "+((int[]) param.args[2])[i]);
                     }
                 }
