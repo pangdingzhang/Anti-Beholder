@@ -30,20 +30,26 @@ public class TimelineAdapter extends RecyclerView.Adapter {
     private Cursor cursor;
     private List<MyAppInfo> myAppInfos;
     private int entries;
+    private String permissionFilter;
 
     public TimelineAdapter(){}
-    public TimelineAdapter(Context context){
+    public TimelineAdapter(Context context, String permissionFilter){
         this.context = context;
+        this.permissionFilter = permissionFilter;
         this.inflater = LayoutInflater.from(context);
         dbHelper = new DBHelper(context, "Permission.db", null, 1);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         String[] tableColumns = new String[]{"package_name","permission","time"};
-        // query the latest 5 minutes. (5 mins * 60 seconds * 1000 mile seconds)
-        String whereClause = "strftime('%s','now') * 1000 - time < 5*60*1000";
-        cursor = db.query("permission_db", tableColumns, whereClause, null,null,null,null);
-
-
+        if(permissionFilter.equals("All Permission")){
+            // query the latest 5 minutes. (5 mins * 60 seconds * 1000 mile seconds)
+            String whereClause = "strftime('%s','now') * 1000 - time < 5*60*1000";
+            cursor = db.query("permission_db", tableColumns, whereClause, null,null,null,null);
+        } else{
+            String whereClause = "permission = ? AND strftime('%s','now') * 1000 - time < 5*60*1000";
+            String[] whereArgs = new String[]{permissionFilter};
+            cursor = db.query("permission_db", tableColumns, whereClause, whereArgs,null,null,null);
+        }
         entries = cursor.getCount();
         cursor.moveToFirst();
     }

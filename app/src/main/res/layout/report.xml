@@ -3,8 +3,31 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <RelativeLayout
+        android:id="@+id/report_head"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <TextView
+            android:id="@+id/report_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Permission Access History Report"/>
+        <TextView
+            android:id="@+id/report_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Past 5 minutes"
+            android:layout_below="@+id/report_title"/>
+        <Spinner
+            android:id="@+id/report_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/report_title"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_below="@+id/report_head"/>
 </RelativeLayout>
