@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/app_level_tl_tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="10dp"
+        android:paddingTop="15dp"
+        android:textSize="16sp"
+        android:text="Example application"/>
+
+    <TextView
+        android:id="@+id/app_level_tl_tv_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="10dp"
+        android:paddingBottom="15dp"
+        android:textSize="16sp"
+        android:text="Example description"
+        android:layout_below="@+id/app_level_tl_tv_name"/>
+</RelativeLayout>

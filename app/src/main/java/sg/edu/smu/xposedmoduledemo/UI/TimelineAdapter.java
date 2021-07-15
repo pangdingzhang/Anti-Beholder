@@ -1,6 +1,7 @@
 package sg.edu.smu.xposedmoduledemo.UI;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import sg.edu.smu.xposedmoduledemo.AppPermissionHistoryActivity;
 import sg.edu.smu.xposedmoduledemo.DBHelper;
 import sg.edu.smu.xposedmoduledemo.R;
 import sg.edu.smu.xposedmoduledemo.xposed.MyAppInfo;
@@ -28,7 +31,6 @@ public class TimelineAdapter extends RecyclerView.Adapter {
     private LayoutInflater inflater;
     private DBHelper dbHelper;
     private Cursor cursor;
-    private List<MyAppInfo> myAppInfos;
     private int entries;
     private String permissionFilter;
 
@@ -42,11 +44,11 @@ public class TimelineAdapter extends RecyclerView.Adapter {
 
         String[] tableColumns = new String[]{"package_name","permission","time"};
         if(permissionFilter.equals("All Permission")){
-            // query the latest 5 minutes. (5 mins * 60 seconds * 1000 mile seconds)
-            String whereClause = "strftime('%s','now') * 1000 - time < 5*60*1000";
+            // query the latest 5 minutes. (60 mins * 60 seconds * 1000 mile seconds)
+            String whereClause = "strftime('%s','now') * 1000 - time < 60*60*1000";
             cursor = db.query("permission_db", tableColumns, whereClause, null,null,null,null);
         } else{
-            String whereClause = "permission = ? AND strftime('%s','now') * 1000 - time < 5*60*1000";
+            String whereClause = "permission = ? AND strftime('%s','now') * 1000 - time < 60*60*1000";
             String[] whereArgs = new String[]{permissionFilter};
             cursor = db.query("permission_db", tableColumns, whereClause, whereArgs,null,null,null);
         }
@@ -78,6 +80,17 @@ public class TimelineAdapter extends RecyclerView.Adapter {
         }catch (PackageManager.NameNotFoundException e){
             e.printStackTrace();
         }
+        vh.name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView name = (TextView) view;
+
+                Intent intent = new Intent(view.getContext(), AppPermissionHistoryActivity.class);
+                intent.putExtra("APP_NAME", name.getText());
+                view.getContext().startActivity(intent);
+
+            }
+        });
 
 
 
@@ -96,6 +109,7 @@ public class TimelineAdapter extends RecyclerView.Adapter {
             logo = itemView.findViewById(R.id.tl_iv_icon);
             name = itemView.findViewById(R.id.tl_tv_name);
             description = itemView.findViewById(R.id.tl_tv_description);
+
         }
 
         public ImageView getLogo() {
@@ -110,4 +124,6 @@ public class TimelineAdapter extends RecyclerView.Adapter {
             return description;
         }
     }
+
+
 }

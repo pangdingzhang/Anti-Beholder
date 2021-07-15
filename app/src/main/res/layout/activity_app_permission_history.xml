@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AppPermissionHistoryActivity">
+    <ImageView
+        android:id="@+id/app_permission_history_app_logo"
+        android:layout_marginLeft="10dp"
+        android:layout_margin="10dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"/>
+    <TextView
+        android:id="@+id/app_permission_history_app_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_toRightOf="@+id/app_permission_history_app_logo"
+        android:layout_alignTop="@+id/app_permission_history_app_logo"
+        android:paddingLeft="10dp"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/app_permission_history_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/app_permission_history_app_logo"
+        android:paddingTop="20dp"
+        android:layout_marginLeft="10dp"/>
+</RelativeLayout>

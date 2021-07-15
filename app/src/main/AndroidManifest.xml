@@ -9,10 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.XposedModuleDemo">
+        <activity android:name=".AppPermissionHistoryActivity"></activity>
+
         <receiver
             android:name=".xposed.DecisionReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
 
         <service
             android:name=".services.MyService"
