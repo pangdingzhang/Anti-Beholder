@@ -17,7 +17,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String sql = "create table permission_db(id INTEGER PRIMARY KEY AUTOINCREMENT, package_name TEXT,permission TEXT,time INTEGER)";
+        String sql = "create table permission_db(id INTEGER PRIMARY KEY AUTOINCREMENT, package_name TEXT,app_name TEXT, permission TEXT,time INTEGER)";
         sqLiteDatabase.execSQL(sql);
         Toast.makeText(mContext, "Create Successfully", Toast.LENGTH_SHORT);
     }

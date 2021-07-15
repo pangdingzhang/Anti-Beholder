@@ -99,6 +99,7 @@ public class XHookImpl implements XHook {
                     //store the permission access record into db
                     values.put("package_name", packageName);
                     values.put("permission", prov.toString());
+                    values.put("app_name", (String)vxContext.getPackageManager().getApplicationLabel(vxContext.getPackageManager().getApplicationInfo(packageName, 0)));
                     values.put("time", (System.currentTimeMillis()));
                     db.insert("permission_db", null, values);
                     values.clear();
