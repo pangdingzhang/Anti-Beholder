@@ -34,7 +34,10 @@ public class SettingPageFragment extends Fragment {
     private AppAdapter.ViewHolder mViewHolder;
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
+    private SharedPreferences prefButton;
+    private SharedPreferences.Editor editorButton;
     private HashMap<String,Integer> mapping = new HashMap<String, Integer>();
+    private boolean buttonHookMode;
 
     public SettingPageFragment(){
         super(R.layout.item_app_info);
@@ -53,6 +56,8 @@ public class SettingPageFragment extends Fragment {
         mapping.put("android.permission.ACCESS_FINE_LOCATION", R.mipmap.location);
         pref= getActivity().getSharedPreferences("permission_info",Context.MODE_MULTI_PROCESS);
         editor = pref.edit();
+        prefButton= getActivity().getSharedPreferences("button_permission_info",Context.MODE_MULTI_PROCESS);
+        editorButton = pref.edit();
     }
 
     @Nullable
@@ -146,7 +151,7 @@ public class SettingPageFragment extends Fragment {
             }
 
             mViewHolder.iv_app_icon.setImageDrawable(myAppInfo.getImage());
-            mViewHolder.tx_app_name.setText(myAppInfo.getAppName() + myAppInfo.getUid());
+            mViewHolder.tx_app_name.setText(myAppInfo.getAppName());
             mViewHolder.tx_app_description.removeAllViews();
             addPermissionIcons(myAppInfo.getAppPermission());
 

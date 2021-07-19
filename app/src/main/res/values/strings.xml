@@ -9,6 +9,8 @@
         <item>Deny</item>
         <item>Fake</item>
     </string-array>
+    <string name="button_hook_setting">Button Hook Setting</string>
+    <string name="sumarry_report">Summary Report</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
