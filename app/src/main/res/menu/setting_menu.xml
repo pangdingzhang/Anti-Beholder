@@ -8,4 +8,7 @@
         android:id="@+id/item_summary_report"
         android:icon="@drawable/history"
         android:title="@string/sumarry_report" />
+    <item
+        android:id="@+id/item_import_config_file"
+        android:title="@string/config_file"/>
 </menu>
