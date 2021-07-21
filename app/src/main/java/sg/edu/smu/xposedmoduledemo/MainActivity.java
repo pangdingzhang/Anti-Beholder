@@ -49,6 +49,7 @@ import sg.edu.smu.xposedmoduledemo.UI.HistoryPageFragment;
 import sg.edu.smu.xposedmoduledemo.UI.SettingPageFragment;
 import sg.edu.smu.xposedmoduledemo.UI.TimelineFragment;
 import sg.edu.smu.xposedmoduledemo.pojos.AppPermissionBean;
+import sg.edu.smu.xposedmoduledemo.pojos.ButtonPermissionBean;
 import sg.edu.smu.xposedmoduledemo.services.MyService;
 import sg.edu.smu.xposedmoduledemo.xposed.MyAppInfo;
 
@@ -143,16 +144,26 @@ public class MainActivity extends AppCompatActivity {
                 JsonObject jsonObject = new JsonParser().parse(stringBuilder.toString()).getAsJsonObject();
                 Log.d("Mulin", "hook_level=" + jsonObject.get("hook_level").getAsString());
                 JsonArray jsonArray = jsonObject.getAsJsonArray("hooks");
-                for (JsonElement hook : jsonArray) {
-
-                    AppPermissionBean appPermissionBean = new Gson().fromJson(hook, new TypeToken<AppPermissionBean>() {}.getType());
-
-                    //根据条件过滤
-                    if (installedPackageNames.contains(appPermissionBean.getPackage_name())) {
-                        editor.putString(appPermissionBean.getPackage_name()+appPermissionBean.getPermission(),appPermissionBean.getDecision());
-                        editor.apply();
+                if(jsonObject.get("hook_level").getAsString().equals("application")){
+                    for (JsonElement hook : jsonArray) {
+                        AppPermissionBean appPermissionBean = new Gson().fromJson(hook, new TypeToken<AppPermissionBean>() {}.getType());
+                        if (installedPackageNames.contains(appPermissionBean.getPackage_name())) {
+                            editor.putString(appPermissionBean.getPackage_name()+appPermissionBean.getPermission(),appPermissionBean.getDecision());
+                            editor.apply();
+                        }
+                    }
+                } else if (jsonObject.get("hook_level").getAsString().equals("button")){
+                    SharedPreferences pref2 = this.getSharedPreferences("button_permission_info",Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor2 = pref2.edit();
+                    for (JsonElement hook : jsonArray) {
+                        ButtonPermissionBean buttonPermissionBean = new Gson().fromJson(hook, new TypeToken<ButtonPermissionBean>() {}.getType());
+                        if (installedPackageNames.contains(buttonPermissionBean.getPackage_name())) {
+                            editor2.putString(buttonPermissionBean.getPackage_name()+buttonPermissionBean.getPermission()+buttonPermissionBean.getButton_id(),buttonPermissionBean.getDecision());
+                            editor2.apply();
+                        }
                     }
                 }
+
                 Toast.makeText(this, "Config File is imported successfully", Toast.LENGTH_SHORT).show();
             } catch (IOException e) {
                 e.printStackTrace();
