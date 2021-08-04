@@ -37,7 +37,7 @@ public class AppTimelineAdapter extends RecyclerView.Adapter{
         dbHelper = new DBHelper(context, "Permission.db", null, 1);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String[] tableColumns = new String[]{"permission","time"};
-        String whereClause = "app_name = ? AND strftime('%s','now') * 1000 - time < 60*60*1000";
+        String whereClause = "app_name = ? AND strftime('%s','now') * 1000 - time < 24*60*60*1000";
         String[] whereArgs = new String[]{appFilter};
         cursor = db.query("permission_db", tableColumns, whereClause, whereArgs,null,null,null);
         entries = cursor.getCount();

@@ -182,7 +182,7 @@ public class HistoryPageFragment extends Fragment {
                 } while (cursor1.moveToNext());
             }
 
-            String whereClause2 = "package_name = ? AND permission = ? AND strftime('%s','now') * 1000 - time < 5*60*1000";
+            String whereClause2 = "package_name = ? AND permission = ? AND strftime('%s','now') * 1000 - time < 24*60*60*1000";
             // 5 mins * 60 seconds * 1000 mile seconds
             String[] whereArgs2 = new String[]{myAppInfos.get(groupPosition).getPackageName(),permissions.get(groupPosition).get(childPosition)};
             long count = DatabaseUtils.queryNumEntries(db, "permission_db",whereClause2,whereArgs2);

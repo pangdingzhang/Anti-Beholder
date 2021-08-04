@@ -45,10 +45,10 @@ public class TimelineAdapter extends RecyclerView.Adapter {
         String[] tableColumns = new String[]{"package_name","permission","time"};
         if(permissionFilter.equals("All Permission")){
             // query the latest 5 minutes. (60 mins * 60 seconds * 1000 mile seconds)
-            String whereClause = "strftime('%s','now') * 1000 - time < 60*60*1000";
+            String whereClause = "strftime('%s','now') * 1000 - time < 24*60*60*1000";
             cursor = db.query("permission_db", tableColumns, whereClause, null,null,null,null);
         } else{
-            String whereClause = "permission = ? AND strftime('%s','now') * 1000 - time < 60*60*1000";
+            String whereClause = "permission = ? AND strftime('%s','now') * 1000 - time < 24*60*60*1000";
             String[] whereArgs = new String[]{permissionFilter};
             cursor = db.query("permission_db", tableColumns, whereClause, whereArgs,null,null,null);
         }
