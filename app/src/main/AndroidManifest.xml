@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.XposedModuleDemo">
-        <activity android:name=".AppPermissionHistoryActivity"></activity>
+        <activity android:name=".UI.AppPermissionHistoryActivity"></activity>
 
         <receiver
             android:name=".xposed.DecisionReceiver"

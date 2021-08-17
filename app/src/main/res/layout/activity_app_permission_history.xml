@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AppPermissionHistoryActivity">
+    tools:context=".UI.AppPermissionHistoryActivity">
     <ImageView
         android:id="@+id/app_permission_history_app_logo"
         android:layout_marginLeft="10dp"

@@ -1,4 +1,4 @@
-package sg.edu.smu.xposedmoduledemo;
+package sg.edu.smu.xposedmoduledemo.UI;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,6 +14,7 @@ import org.w3c.dom.Text;
 
 import java.util.List;
 
+import sg.edu.smu.xposedmoduledemo.R;
 import sg.edu.smu.xposedmoduledemo.UI.AppTimelineAdapter;
 import sg.edu.smu.xposedmoduledemo.UI.TimelineAdapter;
 import sg.edu.smu.xposedmoduledemo.UI.TimelineItemDecoration;
