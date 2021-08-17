@@ -20,8 +20,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import sg.edu.smu.xposedmoduledemo.MainActivity;
 import sg.edu.smu.xposedmoduledemo.R;
@@ -39,13 +41,15 @@ public class SettingPageFragment extends Fragment {
     private HashMap<String,Integer> mapping = new HashMap<String, Integer>();
     private boolean buttonHookMode;
 
+
     public SettingPageFragment(){
         super(R.layout.item_app_info);
     }
 
-    public SettingPageFragment(List<MyAppInfo> myAppInfos, List<List<String>> permissions){
+    public SettingPageFragment(List<MyAppInfo> myAppInfos, List<List<String>> permissions, boolean buttonHookMode){
         this.myAppInfos = myAppInfos;
         this.permissions = permissions;
+        this.buttonHookMode = buttonHookMode;
     }
 
     @Override
@@ -57,7 +61,7 @@ public class SettingPageFragment extends Fragment {
         pref= getActivity().getSharedPreferences("permission_info",Context.MODE_MULTI_PROCESS);
         editor = pref.edit();
         prefButton= getActivity().getSharedPreferences("button_permission_info",Context.MODE_MULTI_PROCESS);
-        editorButton = pref.edit();
+        editorButton = prefButton.edit();
     }
 
     @Nullable
@@ -72,10 +76,25 @@ public class SettingPageFragment extends Fragment {
 
     class AppAdapter extends BaseExpandableListAdapter {
         Context context;
+        public List<List<String>> buttonList = new ArrayList<>();
+        public Set<String> buttonSet;
 
 
         public AppAdapter(Context context){
             this.context=context;
+
+        }
+
+        private void loadAllButtonPermissions(String pkgName){
+            ArrayList permissionAndButtonId = new ArrayList();
+
+            buttonSet = prefButton.getAll().keySet();
+            for(String s : buttonSet){
+                if (s.startsWith(pkgName)){
+                    permissionAndButtonId.add(s.replace(pkgName, ""));
+                }
+            }
+            buttonList.add(permissionAndButtonId);
 
         }
 
@@ -102,7 +121,9 @@ public class SettingPageFragment extends Fragment {
 
         @Override
         public int getChildrenCount(int i) {
-
+            if (buttonHookMode){
+                return buttonList.get(i).size();
+            }
             return permissions.get(i).size();
         }
 
@@ -116,6 +137,9 @@ public class SettingPageFragment extends Fragment {
 
         @Override
         public Object getChild(int i, int i1) {
+            if (buttonHookMode){
+                return buttonList.get(i).get(i1);
+            }
             return permissions.get(i).get(i1);
         }
 
@@ -154,6 +178,8 @@ public class SettingPageFragment extends Fragment {
             mViewHolder.tx_app_name.setText(myAppInfo.getAppName());
             mViewHolder.tx_app_description.removeAllViews();
             addPermissionIcons(myAppInfo.getAppPermission());
+            loadAllButtonPermissions(myAppInfo.getPackageName());
+
 
 
             return convertView;
@@ -174,16 +200,31 @@ public class SettingPageFragment extends Fragment {
             }else {
                 childViewHolder = (AppAdapter.ChildViewHolder) convertView.getTag();
             }
-            childViewHolder.children_item.setText(permissions.get(groupPosition).get(childPosition));
             childViewHolder.children_spinner.setAdapter(spinnerAdapter);
-            childViewHolder.children_spinner.setSelection(Integer.parseInt(
-                    pref.getString(myAppInfos.get(groupPosition).getPackageName()+permissions.get(groupPosition).get(childPosition),"1")));
+            if (buttonHookMode){
+                childViewHolder.children_item.setText(buttonList.get(groupPosition).get(childPosition));
+                childViewHolder.children_spinner.setSelection(Integer.parseInt(
+                        prefButton.getString(myAppInfos.get(groupPosition).getPackageName()+buttonList.get(groupPosition).get(childPosition),"1")));
+            }else{
+                childViewHolder.children_item.setText(permissions.get(groupPosition).get(childPosition));
+                childViewHolder.children_spinner.setSelection(Integer.parseInt(
+                        pref.getString(myAppInfos.get(groupPosition).getPackageName()+permissions.get(groupPosition).get(childPosition),"1")));
+            }
+
             childViewHolder.children_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    Log.d("Mulin", "MainActivity: "+myAppInfos.get(groupPosition).getPackageName()+permissions.get(groupPosition).get(childPosition));
-                    editor.putString(myAppInfos.get(groupPosition).getPackageName()+permissions.get(groupPosition).get(childPosition),Integer.toString(i));
-                    editor.apply();
+                    if (buttonHookMode){
+                        editorButton.putString(myAppInfos.get(groupPosition).getPackageName()+buttonList.get(groupPosition).get(childPosition),Integer.toString(i));
+                        Log.d("Mulin", "prefix is "+myAppInfos.get(groupPosition).getPackageName()+buttonList.get(groupPosition).get(childPosition));
+                        editorButton.apply();
+                    } else {
+                        Log.d("Mulin", "MainActivity: "+myAppInfos.get(groupPosition).getPackageName()+permissions.get(groupPosition).get(childPosition));
+                        editor.putString(myAppInfos.get(groupPosition).getPackageName()+permissions.get(groupPosition).get(childPosition),Integer.toString(i));
+                        editor.apply();
+                    }
+
+
                 }
 
                 @Override
