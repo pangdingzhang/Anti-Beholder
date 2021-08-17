@@ -1,4 +1,4 @@
-package sg.edu.smu.xposedmoduledemo;
+package sg.edu.smu.xposedmoduledemo.UI;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,7 +18,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
@@ -29,10 +28,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -45,12 +40,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import sg.edu.smu.xposedmoduledemo.UI.HistoryPageFragment;
-import sg.edu.smu.xposedmoduledemo.UI.SettingPageFragment;
-import sg.edu.smu.xposedmoduledemo.UI.TimelineFragment;
+import sg.edu.smu.xposedmoduledemo.R;
 import sg.edu.smu.xposedmoduledemo.pojos.AppPermissionBean;
 import sg.edu.smu.xposedmoduledemo.pojos.ButtonPermissionBean;
 import sg.edu.smu.xposedmoduledemo.services.MyService;
+import sg.edu.smu.xposedmoduledemo.util.ScanTool;
 import sg.edu.smu.xposedmoduledemo.xposed.MyAppInfo;
 
 public class MainActivity extends AppCompatActivity {
@@ -99,9 +93,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case R.id.item_button_hook:
+                transaction = fragmentManager.beginTransaction();
+                transaction.replace(R.id.fragment_container, new SettingPageFragment(appInfos,permissionList,true));
+                transaction.commit();
+                break;
             case R.id.item_summary_report:
-                Toast.makeText(this,"Add button clicked",Toast.LENGTH_SHORT).show();
-                fragmentManager = getSupportFragmentManager();
                 transaction = fragmentManager.beginTransaction();
                 transaction.replace(R.id.fragment_container, new HistoryPageFragment(appInfos,permissionList));
                 transaction.commit();
@@ -109,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.item_import_config_file:
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("*/*");//无类型限制
+                intent.setType("*/*");
                 startActivityForResult(intent, 2);
             default:
                 break;
@@ -120,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
+        if (requestCode == 2 && resultCode == Activity.RESULT_OK) {
             Uri uri = data.getData();
             String path = uri.getPath();
             Log.d("Mulin", "path is "+path);
@@ -185,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
             transaction = fragmentManager.beginTransaction();
             switch (item.getItemId()){
                 case R.id.item_setting:
-                    transaction.replace(R.id.fragment_container, new SettingPageFragment(appInfos,permissionList));
+                    transaction.replace(R.id.fragment_container, new SettingPageFragment(appInfos,permissionList,false));
                     transaction.commit();
                     return true;
                 case R.id.item_history:
@@ -200,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
     private void setDefaultFragment() {
         fragmentManager = getSupportFragmentManager();
         transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.fragment_container, new SettingPageFragment(appInfos,permissionList));
+        transaction.replace(R.id.fragment_container, new SettingPageFragment(appInfos,permissionList,false));
         transaction.commit();
     }
 

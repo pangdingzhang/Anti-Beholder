@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,19 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
-import sg.edu.smu.xposedmoduledemo.AppPermissionHistoryActivity;
-import sg.edu.smu.xposedmoduledemo.DBHelper;
+import sg.edu.smu.xposedmoduledemo.util.DBHelper;
 import sg.edu.smu.xposedmoduledemo.R;
-import sg.edu.smu.xposedmoduledemo.xposed.MyAppInfo;
 
 public class TimelineAdapter extends RecyclerView.Adapter {
     private Context context;

@@ -27,7 +27,7 @@ public class Contacts implements HookTemplate {
         }
     }
 
-    @Override // org.synergylabs.pmpandroid.hooks.HookInformationProvider
+    @Override
     public boolean shouldHook(Object instance, Object... args) {
         boolean z = false;
         Uri uri = (Uri) args[0];

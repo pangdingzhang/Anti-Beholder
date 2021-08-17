@@ -1,42 +1,18 @@
 package sg.edu.smu.xposedmoduledemo.xposed;
 
-import android.app.AlertDialog;
 import android.app.AndroidAppHelper;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
-import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import sg.edu.smu.xposedmoduledemo.DBHelper;
-import sg.edu.smu.xposedmoduledemo.MainActivity;
-import sg.edu.smu.xposedmoduledemo.R;
+import sg.edu.smu.xposedmoduledemo.util.DBHelper;
 import sg.edu.smu.xposedmoduledemo.hooks.HookTemplate;
 
 import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class XHookImpl implements XHook {
 //    private static final double TIME_TO_LIVE = 15000.0d;

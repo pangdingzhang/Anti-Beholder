@@ -62,6 +62,10 @@ public class LocationUpdate implements HookTemplate{
                     m.setAccessible(true);
                     return m;
                 }
+                if (m.getName().equals("requestLocationUpdates")){
+                    Log.d("Mulin", "the para length is "+m.getParameterCount());
+                }
+
 
             }
         }

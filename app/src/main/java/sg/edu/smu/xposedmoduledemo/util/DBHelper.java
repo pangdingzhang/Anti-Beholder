@@ -1,4 +1,4 @@
-package sg.edu.smu.xposedmoduledemo;
+package sg.edu.smu.xposedmoduledemo.util;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

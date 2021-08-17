@@ -1,6 +1,5 @@
 package sg.edu.smu.xposedmoduledemo.xposed;
 
-import android.app.AndroidAppHelper;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -12,14 +11,11 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
-import sg.edu.smu.xposedmoduledemo.MainActivity;
 import sg.edu.smu.xposedmoduledemo.R;
 
-import static android.app.Notification.EXTRA_NOTIFICATION_ID;
 import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
 
 public class TextReceiver extends BroadcastReceiver {

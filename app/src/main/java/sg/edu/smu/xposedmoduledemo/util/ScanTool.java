@@ -1,4 +1,4 @@
-package sg.edu.smu.xposedmoduledemo;
+package sg.edu.smu.xposedmoduledemo.util;
 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;

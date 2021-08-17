@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import sg.edu.smu.xposedmoduledemo.MainActivity;
 import sg.edu.smu.xposedmoduledemo.R;
 import sg.edu.smu.xposedmoduledemo.xposed.MyAppInfo;
 

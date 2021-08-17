@@ -1,42 +1,30 @@
 package sg.edu.smu.xposedmoduledemo.UI;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import sg.edu.smu.xposedmoduledemo.DBHelper;
-import sg.edu.smu.xposedmoduledemo.MainActivity;
+import sg.edu.smu.xposedmoduledemo.util.DBHelper;
 import sg.edu.smu.xposedmoduledemo.R;
-import sg.edu.smu.xposedmoduledemo.ScanTool;
 import sg.edu.smu.xposedmoduledemo.xposed.MyAppInfo;
 
 public class HistoryPageFragment extends Fragment {

@@ -1,14 +1,12 @@
 package sg.edu.smu.xposedmoduledemo.UI;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import sg.edu.smu.xposedmoduledemo.DBHelper;
+import sg.edu.smu.xposedmoduledemo.util.DBHelper;
 import sg.edu.smu.xposedmoduledemo.R;
 
 public class AppTimelineAdapter extends RecyclerView.Adapter{
