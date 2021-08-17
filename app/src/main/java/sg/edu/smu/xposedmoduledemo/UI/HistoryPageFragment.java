@@ -62,6 +62,7 @@ public class HistoryPageFragment extends Fragment {
         mapping.put("android.permission.READ_EXTERNAL_STORAGE", R.mipmap.file);
         mapping.put("android.permission.READ_CONTACTS", R.mipmap.contact);
         mapping.put("android.permission.ACCESS_FINE_LOCATION", R.mipmap.location);
+        mapping.put("android.permission.ACCESS_COARSE_LOCATION", R.mipmap.location);
         mapping.put("android.permission.READ_PHONE_STATE", R.mipmap.phone);
     }
 
