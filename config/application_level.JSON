@@ -1,0 +1,15 @@
+{
+  "hook_level": "application",
+  "hooks": [
+    {
+      "package_name": "sg.edu.smu.permissionrequestapp",
+      "permission": "READ_CONTACTS",
+      "decision": "0"
+    },
+    {
+      "package_name": "streetdirectory.mobile",
+      "permission": "ACCESS_FINE_LOCATION",
+      "decision": "0"
+    }
+  ]
+}

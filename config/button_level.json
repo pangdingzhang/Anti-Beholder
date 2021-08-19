@@ -1,0 +1,26 @@
+{
+  "hook_level": "button",
+  "hooks": [
+    {
+      "package_name": "sg.edu.smu.permissionrequestapp",
+      "class_name": "sg.edu.smu.permissionrequestapp.MainActivity$1",
+      "button_id": "2131230807",
+      "permission": "READ_CONTACTS",
+      "decision": "0"
+    },
+    {
+      "package_name": "sg.edu.smu.permissionrequestapp",
+      "class_name": "sg.edu.smu.permissionrequestapp.MainActivity$2",
+      "button_id": "2131230807",
+      "permission": "READ_CONTACTS",
+      "decision": "0"
+    },
+    {
+      "package_name": "streetdirectory.mobile",
+      "class_name": "streetdirectory.mobile.gis.maps.MapView$4",
+      "button_id": "2131230754",
+      "permission": "ACCESS_FINE_LOCATION",
+      "decision": "0"
+    }
+  ]
+}
