@@ -3,7 +3,7 @@ UIPDroid enforces the users' basic right-to-know through user interfaces wheneve
 
 ## Key Features
 <ul>
-  <li> Fine-grained Permission Management(Basic permission managament + Widgt-Level permission management)</li>
+  <li> Fine-grained Permission Management consists of basic permission managament and widget-level permission management</li>
   <li> An additional choice, Ruturn Fake Data, for permission request</li>
   <li> Permission Usage Report</li>
 </ul>
