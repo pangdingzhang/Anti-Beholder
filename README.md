@@ -11,7 +11,7 @@ UIPDroid enforces the users' basic right-to-know through user interfaces wheneve
 ## Installation
 
 <ul>
-  <li> Install <a href ="https://github.com/android-hacker/VirtualXposed">VirtualXposed</li>
+  <li> Install <a href ="https://github.com/android-hacker/VirtualXposed">VirtualXposed</a></li>
   <li> Grant permissions (e.g. Contacts, Location, Storage, etc) to Virtual Xposed</li>
   <li> Install and Activate this module</li>
   <li> Click Reboot in the menu to restart Virtual Xposed and make module effiective </li>
@@ -38,5 +38,6 @@ Users can inspect the logs of apps' permission uses visually in two formats. One
 </ul>
 
 ## Credits
-<li><a href ="https://github.com/android-hacker/VirtualXposed">VirtualXposed</li>
+<li><a href ="https://smc.smu.edu.sg/NSoE-MSS-CS">NSOE MSS-CS</a>: This project is developed as a part of the NSOE MSS-CS hosted in the School of Computing and Information System at Singapore Management University</li>
+<li><a href ="https://github.com/android-hacker/VirtualXposed">VirtualXposed</a>: Powerful framework allowing users to use Xposed modules without root</li>
 
